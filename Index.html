@@ -1,38 +1,218 @@
-const CACHE_NAME = 'offline-cache-v1';
-const urlsToCache = [
-  '/',                  
-  '/index.html',        // Startseite
-  '/patient1.html',     // Beispiel-Unterseite
-  '/patient2.html',     // Weitere Unterseiten
-  '/patient3.html',
-  '/patient4.html',
-  '/patient5.html',
-  '/patient6.html',     // Alle Seiten, die offline verfügbar sein sollen
-  '/patient7.html',
-  '/Einstellungen.html', 
-  '/styles.css',        // Deine CSS-Dateien
-  '/app.js',            // Deine JS-Dateien
-  '/icons/icon-192x192.png',  // Icons
-  '/icons/icon-512x512.png'
-];
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-Code Scanner</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+</head>
+<body>
 
-// Installieren und Caching der Dateien
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
-  );
-});
+    <!-- Menüleiste -->
+    <header>
+        <button id="menuButton">☰ Menü</button>
+        <img src="img/Logo entwurf1.jpg" alt="Logo entwurf1" id="headerImage">
+    </header>
 
-// Caching der Antworten und offline arbeiten
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        // Wenn die Anfrage im Cache ist, zurückgeben
-        return cachedResponse || fetch(event.request);
-      })
-  );
-});
+    <!-- Kamera öffnen Hinweis -->
+    <main>
+        <div class="camera-container">
+            <button id="cameraButton">Kamera öffnen</button>
+        </div>
+        <div id="cameraContainer" style="display:none;">
+            <div id="qr-reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
+            <button id="closeCamera">Kamera schließen</button>
+        </div>
+    </main>
+
+    <!-- Modal für Menü -->
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Menü</h2>
+            <ul>
+                <li><a href="patient1.html">Patient1</a></li>
+                <li><a href="patient2.html">Patient2</a></li>
+                <li><a href="patient3.html">Patient3</a></li>
+                <li><a href="patient4.html">Patient4</a></li>
+                <li><a href="patient5.html">Patient5</a></li>
+                <li><a href="patient6.html">Patient6</a></li>
+                <li><a href="patient7.html">Patient7</a></li>
+                <li><a href="Einstellungen.html">Einstellungen</a></li>
+                <li><a href="#about">Über uns</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cameraButton = document.getElementById("cameraButton");
+            const cameraContainer = document.getElementById("cameraContainer");
+            const closeCameraButton = document.getElementById("closeCamera");
+
+            const menuButton = document.getElementById("menuButton");
+            const menuModal = document.getElementById("menuModal");
+            const closeButton = document.querySelector(".close");
+
+            // Menü öffnen und schließen
+            menuButton.onclick = function() {
+                menuModal.style.display = "block";
+            };
+            closeButton.onclick = function() {
+                menuModal.style.display = "none";
+            };
+            window.onclick = function(event) {
+                if (event.target == menuModal) {
+                    menuModal.style.display = "none";
+                }
+            };
+
+            // QR-Code Kamera öffnen
+            cameraButton.onclick = async function() {
+                try {
+                    // Testet, ob die `MediaDevices`-API verfügbar ist
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        alert("Die Kamera-API wird von diesem Gerät nicht unterstützt.");
+                        return;
+                    }
+
+                    // Zugriff auf die Kamera starten
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: "environment" // Rückkamera bevorzugt
+                        }
+                    });
+
+                    // Wenn Zugriff gewährt, starte QR-Reader
+                    openCamera(stream);
+                } catch (error) {
+                    console.error("Kamera-Zugriff fehlgeschlagen:", error);
+                    alert("Kamera-Zugriff fehlgeschlagen. Bitte Berechtigungen prüfen.");
+                }
+            };
+
+            async function openCamera(stream) {
+                cameraContainer.style.display = "block";
+                const html5QrCode = new Html5Qrcode("qr-reader");
+
+                const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                    alert("QR-Code erkannt: " + decodedText);
+                    window.location.href = decodedText; // Weiterleitung
+                };
+
+                const qrCodeErrorCallback = (errorMessage) => {
+                    console.log("Scan-Fehler: ", errorMessage);
+                };
+
+                try {
+                    await html5QrCode.start(
+                        { facingMode: "environment" }, // Rückkamera
+                        {
+                            fps: 10,   // Frames pro Sekunde
+                            qrbox: 250 // Scan-Bereich
+                        },
+                        qrCodeSuccessCallback,
+                        qrCodeErrorCallback
+                    );
+                } catch (error) {
+                    console.error("Fehler beim Starten des Scanners:", error);
+                }
+            }
+
+            // Kamera schließen
+            closeCameraButton.onclick = function() {
+                cameraContainer.style.display = "none";
+                const html5QrCode = new Html5Qrcode("qr-reader");
+                html5QrCode.stop().catch((error) => {
+                    console.error("Fehler beim Stoppen der Kamera:", error);
+                });
+            };
+
+            // Service Worker registrieren
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then((registration) => {
+                            console.log('Service Worker registriert:', registration);
+                        })
+                        .catch((error) => {
+                            console.log('Service Worker Registrierung fehlgeschlagen:', error);
+                        });
+                });
+            }
+        });
+    </script>
+
+    <!-- CSS -->
+    <style>
+        /* Basislayout */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            width: 100%;
+            padding: 20px;
+            background-color: #52576e;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #menuButton {
+            font-size: 1.5em;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        #headerImage {
+            height: 60px;
+        }
+        main {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+        .camera-container {
+            background-color: #d3d3d3;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        #cameraButton, #closeCamera {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: rgb(75, 78, 119);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+
+</body>
+</html>
