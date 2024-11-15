@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buttons anzeigen</title>
+<link rel="manifest" href="manifest.json">
+<style>
+/* ... (CSS bleibt unverändert) ... */
+</style>
+</head>
+<body>
+ <button id="btn1" class="btn">
+  Patientin W 25 Jahre alt. Pat steht unter Schock hat den PKW bereits selber verlassen. Und hält sich den Arm.
+ </button>
+ <button id="btn2" class="btn hidden">
+  Die Patientin gibt Schmerzen im Arm und im Thorax an. Ausgelöst durch den Gurt beim Aufprall. Der Arm weist eine Fehlstellung auf.
+ </button>
+ <button id="btnCountdown1" class="btn hidden">
+  Sofortmaßnahme einleiten? ja:
+  <span id="countdown1" class="countdown">30</span>
+ </button>
+ <button id="btnCountdown2" class="btn hidden">
+  Sofortmaßnahme einleiten? nein:
+  <span id="countdown2" class="countdown">30</span>
+ </button>
+ <button id="btn3" class="btn hidden">
+  Die Patientin klagt weiter über Schmerzen. Scheint sonst aber stabil zu sein.
+ </button>
+ <button id="btn4" class="btn hidden">
+  Sichtungskategorie wählen und zum nächsten Patienten!
+ </button>
+
+ <div id="modal">
+  <div id="modalContent">
+   <span id="closeModal" style="cursor: pointer; font-size: 20px; font-weight: bold;">× Schließen</span>
+   <img id="VU Fraktur Arm" src="VU Fraktur Arm.jpg" alt="VU Fraktur Arm">
+  </div>
+ </div>
+
+ <script>
+ let countdownIntervals = {};
+
+ function toggleButtons(currentButtonId, nextButtonId) {
+     document.getElementById(currentButtonId).classList.add("hidden");
+     document.getElementById(nextButtonId).classList.remove("hidden");
+ }
+
+ function startCountdown(buttonId, countdownId, nextButtonId, otherButtonId, seconds) {
+     let countdownElement = document.getElementById(countdownId);
+     let timeLeft = seconds;
+     countdownElement.style.visibility = "visible";
+     countdownElement.innerText = timeLeft;
+     document.getElementById(buttonId).disabled = true;
+     document.getElementById(otherButtonId).disabled = true;
+     countdownIntervals[buttonId] = setInterval(() => {
+         timeLeft--;
+         countdownElement.innerText = timeLeft;
+         if (timeLeft <= 0) {
+             clearInterval(countdownIntervals[buttonId]);
+             document.getElementById(buttonId).classList.add("hidden");
+             document.getElementById(otherButtonId).classList.add("hidden");
+             document.getElementById(nextButtonId).classList.remove("hidden");
+         }
+     }, 1000);
+ }
+
+ function resetAll() {
+     for (let interval in countdownIntervals) {
+         clearInterval(countdownIntervals[interval]);
+     }
+     countdownIntervals = {};
+     document.getElementById("btn1").classList.remove("hidden");
+     document.getElementById("btn2").classList.add("hidden");
+     document.getElementById("btnCountdown1").classList.add("hidden");
+     document.getElementById("btnCountdown2").classList.add("hidden");
+     document.getElementById("btn3").classList.add("hidden");
+     document.getElementById("btn4").classList.add("hidden");
+     document.getElementById("countdown1").innerText = "30";
+     document.getElementById("countdown1").style.visibility = "hidden";
+     document.getElementById("countdown2").innerText = "30";
+     document.getElementById("countdown2").style.visibility = "hidden";
+     document.getElementById("btnCountdown1").disabled = false;
+     document.getElementById("btnCountdown2").disabled = false;
+ }
+
+ document.getElementById("btn1").addEventListener("click", function() {
+     toggleButtons("btn1", "btn2");
+ });
+
+ document.getElementById("btn2").addEventListener("click", function() {
+     toggleButtons("btn2", "btnCountdown1");
+     document.getElementById("btnCountdown2").classList.remove("hidden");
+     document.getElementById("modal").style.display = "flex"; // Modal anzeigen
+ });
+
+ document.getElementById("btnCountdown1").addEventListener("click", function() {
+     startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 30); // Countdown 30 Sekunden
+ });
+
+ document.getElementById("btnCountdown2").addEventListener("click", function() {
+     startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5); // Countdown 5 Sekunden
+ });
+
+ document.getElementById("btn3").addEventListener("click", function() {
+     toggleButtons("btn3", "btn4");
+ });
+
+ document.getElementById("btn4").addEventListener("click", function() {
+     resetAll();
+ });
+
+ document.getElementById("VU Fraktur Arm").addEventListener("click", function() {
+     document.getElementById("modal").style.display = "none";
+ });
+
+ document.getElementById("closeModal").addEventListener("click", function() {
+     document.getElementById("modal").style.display = "none";
+ });
+
+ window.onclick = function(event) {
+     if (event.target === document.getElementById("modal")) {
+         document.getElementById("modal").style.display = "none";
+     }
+ }
+
+ window.addEventListener("keydown", function(event) {
+     if (event.key === "Escape") {
+         document.getElementById("modal").style.display = "none";
+     }
+ });
+ </script>
+</body>
+</html>

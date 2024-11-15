@@ -1,0 +1,191 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+ <title>
+  Buttons anzeigen
+ </title>
+ <link rel="manifest" href="manifest.json">
+ <style>
+  .btn {
+            padding: 50px 30px;
+            background-color: rgb(75, 78, 119);
+            color: aliceblue;
+            font-size: 30px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            text-align: center;
+        }
+        .btn:not(#btnCountdown1):not(#btnCountdown2)::after {
+            content: "⬇ Weitere Informationen";
+            display: block;
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+            margin-top: 10px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 10px;
+            animation: slowBlinkText 2s infinite;
+        }
+        @keyframes slowBlinkText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .btn:hover {
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { background-color: rgb(75, 78, 119); }
+            50% { background-color: rgb(100, 100, 150); }
+        }
+        .hidden {
+            display: none;
+        }
+        .countdown {
+            font-weight: bold;
+            font-size: 35px;
+            color: #ff6347;
+            animation: countdownAnim 1s infinite;
+            visibility: hidden;
+        }
+        @keyframes countdownAnim {
+            0% { transform: scale(1); color: #ff6347; }
+            50% { transform: scale(1.2); color: #ff4500; }
+            100% { transform: scale(1); color: #ff6347; }
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        #modalContent {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        #VU_Bauch {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+        }
+ </style>
+ <button id="btn1" class="btn">
+  Patientin W 22 Jahre alt. Die Patientin klagt über Kopfschmerzen und kann sich an nichts erinnern. Ihr Nacken tut auch weh.
+ </button>
+ <button id="btn2" class="btn hidden">
+  Die Patientin hat ein großes Hämatom an der Stirn und der Nacken wirkt hart. Es sind weitere kleine Hämatome am Oberkörper sichtbar.
+ </button>
+ <button id="btnCountdown1" class="btn hidden">
+  Sofortmaßnahme einleiten? ja:
+  <span id="countdown1" class="countdown">
+   30
+  </span>
+ </button>
+ <button id="btnCountdown2" class="btn hidden">
+  Sofortmaßnahme einleiten? nein:
+  <span id="countdown2" class="countdown">
+   30
+  </span>
+ </button>
+ <button id="btn3" class="btn hidden">
+  Der Zustand der Patientin ist unverändert.
+ </button>
+ <button id="btn4" class="btn hidden">
+  Sichtungskategorie wählen und zum nächsten Patienten!
+ </button>
+ <div id="modal">
+  <div id="modalContent">
+   <span id="closeModal" style="cursor: pointer; font-size: 20px; font-weight: bold;">
+    × Schließen
+   </span>
+   <img id="VU SHT" src="VU SHT.jpg" alt="VU SHT">
+  </div>
+ </div>
+ <script>
+  let countdownIntervals = {};
+        function toggleButtons(currentButtonId, nextButtonId) {
+            document.getElementById(currentButtonId).classList.add("hidden");
+            document.getElementById(nextButtonId).classList.remove("hidden");
+        }
+        function startCountdown(buttonId, countdownId, nextButtonId, otherButtonId, seconds) {
+            let countdownElement = document.getElementById(countdownId);
+            let timeLeft = seconds;
+            countdownElement.style.visibility = "visible";
+            countdownElement.innerText = timeLeft;
+            document.getElementById(buttonId).disabled = true;
+            document.getElementById(otherButtonId).disabled = true;
+            countdownIntervals[buttonId] = setInterval(() => {
+                timeLeft--;
+                countdownElement.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownIntervals[buttonId]);
+                    document.getElementById(buttonId).classList.add("hidden");
+                    document.getElementById(otherButtonId).classList.add("hidden");
+                    document.getElementById(nextButtonId).classList.remove("hidden");
+                }
+            }, 1000);
+        }
+        function resetAll() {
+            for (let interval in countdownIntervals) {
+                clearInterval(countdownIntervals[interval]);
+            }
+            countdownIntervals = {};
+            document.getElementById("btn1").classList.remove("hidden");
+            document.getElementById("btn2").classList.add("hidden");
+            document.getElementById("btnCountdown1").classList.add("hidden");
+            document.getElementById("btnCountdown2").classList.add("hidden");
+            document.getElementById("btn3").classList.add("hidden");
+            document.getElementById("btn4").classList.add("hidden");
+            document.getElementById("countdown1").innerText = "30";
+            document.getElementById("countdown1").style.visibility = "hidden";
+            document.getElementById("countdown2").innerText = "30";
+            document.getElementById("countdown2").style.visibility = "hidden";
+            document.getElementById("btnCountdown1").disabled = false;
+            document.getElementById("btnCountdown2").disabled = false;
+        }
+        document.getElementById("btn1").addEventListener("click", function() {
+            toggleButtons("btn1", "btn2");
+        });
+        document.getElementById("btn2").addEventListener("click", function() {
+            toggleButtons("btn2", "btnCountdown1");
+            document.getElementById("btnCountdown2").classList.remove("hidden");
+            document.getElementById("modal").style.display = "flex"; // Modal anzeigen
+        });
+        document.getElementById("btnCountdown1").addEventListener("click", function() {
+            startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 30); // Countdown 30 Sekunden
+        });
+        document.getElementById("btnCountdown2").addEventListener("click", function() {
+            startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5); // Countdown 5 Sekunden
+        });
+        document.getElementById("btn3").addEventListener("click", function() {
+            toggleButtons("btn3", "btn4");
+        });
+        document.getElementById("btn4").addEventListener("click", function() {
+            resetAll();
+        });
+        // Modal schließen, wenn auf das Bild oder den Schließen-Button geklickt wird
+        document.getElementById("VU SHT").addEventListener("click", function() {
+            document.getElementById("modal").style.display = "none";
+        });
+        document.getElementById("closeModal").addEventListener("click", function() {
+            document.getElementById("modal").style.display = "none";
+        });
+        window.onclick = function(event) {
+            if (event.target === document.getElementById("modal")) {
+                document.getElementById("modal").style.display = "none";
+            }
+        }
+ </script>
