@@ -19,5 +19,8 @@
     "platforms": [
       "android"
     ]
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
