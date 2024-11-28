@@ -11,7 +11,6 @@
     <!-- Menüleiste -->
     <header>
         <button id="menuButton">☰ Menü</button>
-        
     </header>
 
     <!-- Kamera öffnen Hinweis -->
@@ -151,9 +150,6 @@
             min-height: 100vh;
         }
 
-       
-        
-
         #menuButton {
             position: absolute;
             left: 15px;
@@ -169,10 +165,12 @@
             margin-top: 50px;
             max-width: 600px;
             padding: 20px;
-            background-color: #4324f0;
-            color: white;
+            background-color: whitesmoke;
+            color: rgb(8, 0, 0);
             text-align: center;
             border-radius: 10px;
+            border: 8px solid transparent; /* Standard transparenten Rand */
+            animation: blink 1s infinite; /* Blinken dauerhaft aktiv */
         }
 
         .camera-container {
@@ -216,7 +214,7 @@
 
         .button-container {
             position: absolute;
-            bottom: 20px;
+            bottom: 30px;
             width: 100%;
             text-align: center;
         }
@@ -228,6 +226,27 @@
             border: none;
             border-radius: 50px;
             cursor: pointer;
+        }
+
+        /* Hier beginnt die Anpassung */
+        /* Hover-Effekt für den Textbereich mit Blink-Effekt in Rot */
+        .text-container:hover {
+            border: 9px solid red; /* Roter Rand bei Hover */
+            animation: blink 1s infinite; /* Blinken des Rahmens */
+        
+          
+        }
+
+        /* Schriftgröße im Textbereich */
+        .text-container p {
+            font-size: 1.5em; /* Größere Schrift */
+        }
+
+        /* Blinkende Animation */
+        @keyframes blink {
+            0% { border-color: red; }
+            50% { border-color: transparent; }
+            100% { border-color: red; }
         }
     </style>
 </body>
