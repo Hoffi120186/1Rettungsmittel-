@@ -1,105 +1,164 @@
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buttons anzeigen</title>
-<link rel="manifest" href="manifest.json">
-<style>
-  .btn {
-        padding: 50px 30px;
-        background-color: rgb(75, 78, 119);
-        color: aliceblue;
-        font-size: 30px;
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
-        margin: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5);
-        position: relative;
-        text-align: center;
-    }
-    .btn:not(#btnCountdown1):not(#btnCountdown2)::after {
-        content: "⬇ Weitere Informationen";
-        display: block;
-        font-size: 18px;
-        color: white;
-        font-weight: bold;
-        margin-top: 10px;
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 10px;
-        animation: slowBlinkText 2s infinite;
-    }
-    @keyframes slowBlinkText {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    .btn:hover {
-        animation: blink 2s infinite;
-    }
-    @keyframes blink {
-        0%, 100% { background-color: rgb(75, 78, 119); }
-        50% { background-color: rgb(100, 100, 150); }
-    }
-    .btn:active {
-        animation: blink 0.3s infinite;
-    }
-    .hidden {
-        display: none;
-    }
-    .countdown {
-        font-weight: bold;
-        font-size: 35px;
-        color: #ff6347;
-        animation: countdownAnim 1s infinite;
-        visibility: hidden;
-    }
-    @keyframes countdownAnim {
-        0% { transform: scale(1); color: #ff6347; }
-        50% { transform: scale(1.2); color: #ff4500; }
-        100% { transform: scale(1); color: #ff6347; }
-    }
-    #modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.7);
-        justify-content: center;
-        align-items: center;
-    }
-    #modalContent {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-    }
-    #VU_Bauch1 {
-        width: 100%;
-        max-width: 600px;
-        height: auto;
-    }
- </style>
- 
- <button id="btn1" class="btn">Patient M 47 Jahre alt. Patient atmet nicht und hat keinen zentralen Puls.</button>
- <button id="btn2" class="btn hidden">Der Patient hat Wunden an den Unterschenkeln und viele Hämatome. Der Patient ist stark im PKW eingeklemmt.</button>
- <button id="btnCountdown1" class="btn hidden">Sofortmaßnahme einleiten? ja:<span id="countdown1" class="countdown">30</span></button>
- <button id="btnCountdown2" class="btn hidden">Sofortmaßnahme einleiten? nein:<span id="countdown2" class="countdown">30</span></button>
- <button id="btn3" class="btn hidden">Dem Patienten kann nicht geholfen werden. Da er nicht schnell gerettet werden kann.</button>
- <button id="btn4" class="btn hidden">Sichtungskategorie wählen und zum nächsten Patienten!</button>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buttons anzeigen</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            margin: 0;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
 
- <div id="modal">
-  <div id="modalContent">
-   <span id="closeModal" style="cursor: pointer; font-size: 20px; font-weight: bold;">× Schließen</span>
-   <img id="VU Tod" src="VU Tod.jpg" alt="VU Tod">
-  </div>
- </div>
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            margin-top: 40px; 
+            margin-bottom: 100px; 
+        }
 
- <script>
-  let countdownIntervals = {};
-    
+        .btn {
+            width: 90%;
+            max-width: 600px;
+            padding: 25px;
+            background-color: rgb(75, 78, 119);
+            color: aliceblue;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 15px 0;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s ease;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .btn span {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: rgb(100, 100, 150);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #einsatzabbruchButton {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-align: center;
+            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
+        }
+
+        #einsatzabbruchButton:hover {
+            background-color: #c0392b;
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modalContent {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        #modal img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        #modal span {
+            display: block;
+            margin-top: 10px;
+            color: #e74c3c;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Buttons -->
+<div class="button-container">
+    <button id="btn1" class="btn">
+        Pat.M 47 Jahre alt.<br>Der Pat. wirkt sehr blass<br>Der Pat. atmet nicht und hat keinen zentralen Puls.
+        <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btn2" class="btn hidden">
+        Der Pat. hat große Wunden an den unterschenkeln und viele Hämatome.<br>Der Pat. ist stark im PKW eingeklemmt.
+        <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btnCountdown1" class="btn hidden">
+        Sofortmaßnahme einleiten? Ja<br><span id="countdown1" class="countdown"></span>
+    </button>
+    <button id="btnCountdown2" class="btn hidden">
+        Sofortmaßnahme einleiten? Nein<br><span id="countdown2" class="countdown"></span>
+    </button>
+    <button id="btn3" class="btn hidden">
+        Dem Pat. kann nicht geholfen werden.<br>Da er nicht schnell gerettet werden kann.
+        <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btn4" class="btn hidden">
+        Sichtungskategorie wählen<br>und zum nächsten Patienten!
+    </button>
+</div>
+
+<!-- Modal für Bildanzeige -->
+<div id="modal">
+    <div id="modalContent">
+        <img src="VU Tod.jpg" alt="VU Tod">
+        <span id="closeModal">Schließen</span>
+    </div>
+</div>
+
+<!-- Einsatzabbruch-Button -->
+<a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
+
+<script>
+    let countdownIntervals = {};
+
     function toggleButtons(currentButtonId, nextButtonId) {
         document.getElementById(currentButtonId).classList.add("hidden");
         document.getElementById(nextButtonId).classList.remove("hidden");
@@ -112,6 +171,7 @@
         countdownElement.innerText = timeLeft;
         document.getElementById(buttonId).disabled = true;
         document.getElementById(otherButtonId).disabled = true;
+
         countdownIntervals[buttonId] = setInterval(() => {
             timeLeft--;
             countdownElement.innerText = timeLeft;
@@ -124,62 +184,48 @@
         }, 1000);
     }
 
-    function resetAll() {
-        for (let interval in countdownIntervals) {
-            clearInterval(countdownIntervals[interval]);
-        }
-        countdownIntervals = {};
-        document.getElementById("btn1").classList.remove("hidden");
-        document.getElementById("btn2").classList.add("hidden");
-        document.getElementById("btnCountdown1").classList.add("hidden");
-        document.getElementById("btnCountdown2").classList.add("hidden");
-        document.getElementById("btn3").classList.add("hidden");
-        document.getElementById("btn4").classList.add("hidden");
-        document.getElementById("countdown1").innerText = "30";
-        document.getElementById("countdown1").style.visibility = "hidden";
-        document.getElementById("countdown2").innerText = "30";
-        document.getElementById("countdown2").style.visibility = "hidden";
-        document.getElementById("btnCountdown1").disabled = false;
-        document.getElementById("btnCountdown2").disabled = false;
+    function redirectToIndex() {
+        window.location.href = "index.html";
     }
 
-    document.getElementById("btn1").addEventListener("click", function() {
+    document.getElementById("btn1").addEventListener("click", function () {
         toggleButtons("btn1", "btn2");
     });
 
-    document.getElementById("btn2").addEventListener("click", function() {
+    document.getElementById("btn2").addEventListener("click", function () {
         toggleButtons("btn2", "btnCountdown1");
         document.getElementById("btnCountdown2").classList.remove("hidden");
-        document.getElementById("modal").style.display = "flex"; 
+        document.getElementById("modal").style.display = "flex"; // Bild wird angezeigt
     });
 
-    document.getElementById("btnCountdown1").addEventListener("click", function() {
-        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 30); 
+    document.getElementById("btnCountdown1").addEventListener("click", function () {
+        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 5);
     });
 
-    document.getElementById("btnCountdown2").addEventListener("click", function() {
-        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5); 
+    document.getElementById("btnCountdown2").addEventListener("click", function () {
+        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5);
     });
 
-    document.getElementById("btn3").addEventListener("click", function() {
+    document.getElementById("btn3").addEventListener("click", function () {
         toggleButtons("btn3", "btn4");
     });
 
-    document.getElementById("btn4").addEventListener("click", function() {
-        resetAll();
+    document.getElementById("btn4").addEventListener("click", function () {
+        redirectToIndex();
     });
 
-    document.getElementById("VU Tod").addEventListener("click", function() {
+    // Schließen des Bildes durch Klick auf das Bild
+    document.getElementById("closeModal").addEventListener("click", function () {
         document.getElementById("modal").style.display = "none";
     });
 
-    document.getElementById("closeModal").addEventListener("click", function() {
-        document.getElementById("modal").style.display = "none";
-    });
-
-    window.onclick = function(event) {
-        if (event.target === document.getElementById("modal")) {
+    // Schließen des Bildes durch Klick auf das Modal
+    document.getElementById("modal").addEventListener("click", function (e) {
+        if (e.target === document.getElementById("modal")) {
             document.getElementById("modal").style.display = "none";
         }
-    }
- </script>
+    });
+</script>
+
+</body>
+</html>
