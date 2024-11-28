@@ -12,29 +12,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Buttons nach oben verschieben */
+            justify-content: flex-start;
             min-height: 100vh;
             background-color: #f4f4f9;
         }
 
-        /* Container für Buttons */
         .button-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 90%;
             max-width: 600px;
-            margin-top: 40px; /* Abstand vom oberen Rand */
-            margin-bottom: 100px; /* Platz für Einsatzabbruch-Button */
+            margin-top: 40px; 
+            margin-bottom: 100px; 
         }
 
-        /* Buttons */
         .btn {
-            width: 100%;
-            padding: 25px; /* Vergrößerte Polsterung */
+            width: 90%;
+            max-width: 600px;
+            padding: 25px;
             background-color: rgb(75, 78, 119);
             color: aliceblue;
-            font-size: 1.5em; /* Vergrößerte Schrift */
+            font-size: 1.5em;
             font-weight: bold;
             margin: 15px 0;
             cursor: pointer;
@@ -42,14 +41,16 @@
             border-radius: 8px;
             box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.5);
             transition: background-color 0.3s ease;
+            line-height: 1.5;
+            position: relative;
         }
 
-        .btn:not(#btnCountdown1):not(#btnCountdown2)::after {
-            content: "⬇ Weitere Informationen";
+        .btn span {
             display: block;
-            font-size: 1em;
+            margin-top: 10px;
+            font-size: 0.9em;
             color: white;
-            margin-top: 5px;
+            font-weight: bold;
         }
 
         .btn:hover {
@@ -60,67 +61,104 @@
             display: none;
         }
 
-        /* Einsatzabbruch-Button */
         #einsatzabbruchButton {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 15px 30px; /* Größere Polsterung */
+            padding: 15px 30px;
             background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 1.4em; /* Größere Schrift */
+            font-size: 1.2em;
             cursor: pointer;
             text-align: center;
+            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
         }
 
         #einsatzabbruchButton:hover {
             background-color: #c0392b;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .btn {
-                font-size: 1.3em;
-                padding: 20px;
-            }
-
-            #einsatzabbruchButton {
-                font-size: 1.2em;
-                padding: 12px 25px;
-            }
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-        @media (max-width: 480px) {
-            .btn {
-                font-size: 1.2em;
-                padding: 15px;
-            }
+        #modalContent {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            max-width: 90%;
+        }
 
-            #einsatzabbruchButton {
-                font-size: 1em;
-                padding: 10px 20px;
-            }
+        #modal img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        #modal span {
+            display: block;
+            margin-top: 10px;
+            color: #e74c3c;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
+<!-- Buttons -->
 <div class="button-container">
-    <button id="btn1" class="btn">Patient M 38 Jahre alt.<br>Patient klagt über starke Bauchschmerzen.</button>
-    <button id="btn2" class="btn hidden">Der Patient gibt an,<br>dass die Schmerzen durch den Aufprall verursacht wurden.</button>
-    <button id="btnCountdown1" class="btn hidden">Sofortmaßnahme einleiten?<br>Ja <span id="countdown1"></span></button>
-    <button id="btnCountdown2" class="btn hidden">Sofortmaßnahme einleiten?<br>Nein <span id="countdown2"></span></button>
-    <button id="btn3" class="btn hidden">Der Zustand des Patienten<br>ist unverändert!</button>
-    <button id="btn4" class="btn hidden">Sichtungskategorie wählen<br>und zum nächsten Patienten.</button>
+    <button id="btn1" class="btn">
+        Pat.W 28 Jahre alt.<br>Patientin wirkt blass, am Unterschenkel ist eine stark pulsierende Blutung zu sehen.
+        <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btn2" class="btn hidden">
+        Die Pat. hat mehrere kleine Hämatome an den Armen.<br>Sie ist nicht eingeklemmt und frei zugänglich.
+        <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btnCountdown1" class="btn hidden">
+        Sofortmaßnahme einleiten? Ja<br><span id="countdown1" class="countdown"></span>
+    </button>
+    <button id="btnCountdown2" class="btn hidden">
+        Sofortmaßnahme einleiten? Nein<br><span id="countdown2" class="countdown"></span>
+    </button>
+    <button id="btn3" class="btn hidden">
+        Die Blutung konnte mit einer Sofortmaßnahme erstversorgt werden.
+        <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btn4" class="btn hidden">
+        Sichtungskategorie wählen<br>und zum nächsten Patienten!
+    </button>
+</div>
+
+<!-- Modal für Bildanzeige -->
+<div id="modal">
+    <div id="modalContent">
+        <img src="VU untersch.jpg" alt="VU untersch">
+        <span id="closeModal">Schließen</span>
+    </div>
 </div>
 
 <!-- Einsatzabbruch-Button -->
 <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
 
 <script>
+    let countdownIntervals = {};
+
     function toggleButtons(currentButtonId, nextButtonId) {
         document.getElementById(currentButtonId).classList.add("hidden");
         document.getElementById(nextButtonId).classList.remove("hidden");
@@ -129,21 +167,25 @@
     function startCountdown(buttonId, countdownId, nextButtonId, otherButtonId, seconds) {
         let countdownElement = document.getElementById(countdownId);
         let timeLeft = seconds;
+        countdownElement.style.visibility = "visible";
         countdownElement.innerText = timeLeft;
         document.getElementById(buttonId).disabled = true;
         document.getElementById(otherButtonId).disabled = true;
 
-        let interval = setInterval(() => {
+        countdownIntervals[buttonId] = setInterval(() => {
             timeLeft--;
             countdownElement.innerText = timeLeft;
-
             if (timeLeft <= 0) {
-                clearInterval(interval);
+                clearInterval(countdownIntervals[buttonId]);
                 document.getElementById(buttonId).classList.add("hidden");
                 document.getElementById(otherButtonId).classList.add("hidden");
                 document.getElementById(nextButtonId).classList.remove("hidden");
             }
         }, 1000);
+    }
+
+    function redirectToIndex() {
+        window.location.href = "index.html";
     }
 
     document.getElementById("btn1").addEventListener("click", function () {
@@ -153,14 +195,15 @@
     document.getElementById("btn2").addEventListener("click", function () {
         toggleButtons("btn2", "btnCountdown1");
         document.getElementById("btnCountdown2").classList.remove("hidden");
+        document.getElementById("modal").style.display = "flex"; // Bild wird angezeigt
     });
 
     document.getElementById("btnCountdown1").addEventListener("click", function () {
-        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 20);
+        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 30);
     });
 
     document.getElementById("btnCountdown2").addEventListener("click", function () {
-        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5);
+        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 30);
     });
 
     document.getElementById("btn3").addEventListener("click", function () {
@@ -168,8 +211,21 @@
     });
 
     document.getElementById("btn4").addEventListener("click", function () {
-        window.location.href = "index.html";
+        redirectToIndex();
+    });
+
+    // Schließen des Bildes durch Klick auf den Schließen-Button
+    document.getElementById("closeModal").addEventListener("click", function () {
+        document.getElementById("modal").style.display = "none";
+    });
+
+    // Schließen des Bildes durch Klick auf das Modal
+    document.getElementById("modal").addEventListener("click", function (e) {
+        if (e.target === document.getElementById("modal")) {
+            document.getElementById("modal").style.display = "none";
+        }
     });
 </script>
+
 </body>
 </html>
