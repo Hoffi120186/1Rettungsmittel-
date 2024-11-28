@@ -12,7 +12,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Buttons nach oben verschieben */
             min-height: 100vh;
             background-color: #f4f4f9;
         }
@@ -24,17 +24,19 @@
             align-items: center;
             width: 90%;
             max-width: 600px;
-            margin-bottom: 80px; /* Platz für Einsatzabbruch-Button */
+            margin-top: 40px; /* Abstand vom oberen Rand */
+            margin-bottom: 100px; /* Platz für Einsatzabbruch-Button */
         }
 
         /* Buttons */
         .btn {
             width: 100%;
-            padding: 20px;
+            padding: 25px; /* Vergrößerte Polsterung */
             background-color: rgb(75, 78, 119);
             color: aliceblue;
-            font-size: 1.2em;
-            margin: 10px 0;
+            font-size: 1.5em; /* Vergrößerte Schrift */
+            font-weight: bold;
+            margin: 15px 0;
             cursor: pointer;
             text-align: center;
             border-radius: 8px;
@@ -64,12 +66,12 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 10px 20px;
+            padding: 15px 30px; /* Größere Polsterung */
             background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 1.2em;
+            font-size: 1.4em; /* Größere Schrift */
             cursor: pointer;
             text-align: center;
         }
@@ -81,25 +83,25 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .btn {
-                font-size: 1em;
-                padding: 15px;
+                font-size: 1.3em;
+                padding: 20px;
             }
 
             #einsatzabbruchButton {
-                font-size: 1em;
-                padding: 8px 15px;
+                font-size: 1.2em;
+                padding: 12px 25px;
             }
         }
 
         @media (max-width: 480px) {
             .btn {
-                font-size: 0.9em;
-                padding: 10px;
+                font-size: 1.2em;
+                padding: 15px;
             }
 
             #einsatzabbruchButton {
-                font-size: 0.9em;
-                padding: 6px 10px;
+                font-size: 1em;
+                padding: 10px 20px;
             }
         }
     </style>
@@ -109,8 +111,8 @@
 <div class="button-container">
     <button id="btn1" class="btn">Patient M 38 Jahre alt.<br>Patient klagt über starke Bauchschmerzen.</button>
     <button id="btn2" class="btn hidden">Der Patient gibt an,<br>dass die Schmerzen durch den Aufprall verursacht wurden.</button>
-    <button id="btnCountdown1" class="btn hidden">Sofortmaßnahme einleiten?<br>Ja: <span id="countdown1">30</span></button>
-    <button id="btnCountdown2" class="btn hidden">Sofortmaßnahme einleiten?<br>Nein: <span id="countdown2">30</span></button>
+    <button id="btnCountdown1" class="btn hidden">Sofortmaßnahme einleiten?<br>Ja <span id="countdown1"></span></button>
+    <button id="btnCountdown2" class="btn hidden">Sofortmaßnahme einleiten?<br>Nein <span id="countdown2"></span></button>
     <button id="btn3" class="btn hidden">Der Zustand des Patienten<br>ist unverändert!</button>
     <button id="btn4" class="btn hidden">Sichtungskategorie wählen<br>und zum nächsten Patienten.</button>
 </div>
