@@ -16,15 +16,17 @@
             min-height: 100vh;
             background-color: #f4f4f9;
         }
-    /* Container für Buttons */
+
         .button-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 90%;
             max-width: 600px;
-            margin-top: 40px; /* Abstand vom oberen Rand */
-            margin-bottom: 100px; /* Platz für Einsatzabbruch-Button */
+            margin-top: 40px; 
+            margin-bottom: 100px; 
+        }
+
         .btn {
             width: 90%;
             max-width: 600px;
@@ -72,6 +74,7 @@
             font-size: 1.2em;
             cursor: pointer;
             text-align: center;
+            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
         }
 
         #einsatzabbruchButton:hover {
@@ -135,7 +138,6 @@
     </button>
     <button id="btn3" class="btn hidden">
         Die Blutung konnte mit einer Sofortmaßnahme erstversorgt werden.
-    
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btn4" class="btn hidden">
@@ -193,7 +195,7 @@
     document.getElementById("btn2").addEventListener("click", function () {
         toggleButtons("btn2", "btnCountdown1");
         document.getElementById("btnCountdown2").classList.remove("hidden");
-        document.getElementById("modal").style.display = "flex";
+        document.getElementById("modal").style.display = "flex"; // Bild wird angezeigt
     });
 
     document.getElementById("btnCountdown1").addEventListener("click", function () {
@@ -212,10 +214,12 @@
         redirectToIndex();
     });
 
+    // Schließen des Bildes durch Klick auf das Bild
     document.getElementById("closeModal").addEventListener("click", function () {
         document.getElementById("modal").style.display = "none";
     });
 
+    // Schließen des Bildes durch Klick auf das Modal
     document.getElementById("modal").addEventListener("click", function (e) {
         if (e.target === document.getElementById("modal")) {
             document.getElementById("modal").style.display = "none";
