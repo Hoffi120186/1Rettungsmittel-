@@ -6,8 +6,8 @@
     "display": "fullscreen",
     "orientation": "portrait",
     "scope": "/",
-    "start_url": "/"
-  }  "icons": [
+    "start_url": "/",
+    "icons": [
         {
             "src": "Logo App-192x192.jpg",
             "sizes": "192x192",
