@@ -123,18 +123,19 @@
 <!-- Buttons -->
 <div class="button-container">
     <button id="btn1" class="btn">
-        Pat. W 67 Jahre alt.<br>Die Pat. war nicht direkt beteiligt.<br>Sie ist spazieren gewesen und hat den Unfall der Leitstelle gemeldet.<br>
+        Pat. W 67 Jahre alt.<br>Die Pat. war nicht direkt beteiligt.<br>Sie ist spazieren gegangen und hat den Unfall der Leitstelle gemeldet.<br>
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btn2" class="btn hidden">
-        Die Pat.wirkt sehr mitgenommen<br>Sie sagt, dass sie ihren Mann bei einem VU verloren hat.<br>Es sind keine Verletzungen sichtbar.
+        Die Pat.wirkt sehr mitgenommen<br>Sie sagt, dass sie ihren Mann bei einem VU verloren hat.<br>Es sind keine Verletzungen sichtbar.<br>Die Pat. ist ABC-Stabil
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btnCountdown1" class="btn hidden">
-        Sofortmaßnahme einleiten? Ja<br><span id="countdown1" class="countdown"></span>
+        Sofortmaßnahme:<br>Betreuung bis weiter Kräfte am Ort<span id="countdown1" class="countdown"></span>
     </button>
     <button id="btnCountdown2" class="btn hidden">
-        Sofortmaßnahme einleiten? Nein<br><span id="countdown2" class="countdown"></span>
+        Sofortmaßnahme:<br>Keine Sofortmaßnahme nötig
+    <span id="countdown2" class="countdown"></span>
     </button>
     <button id="btn3" class="btn hidden">
         Der Zustand der Pat. ist unverändert.<br>
@@ -199,11 +200,11 @@
     });
 
     document.getElementById("btnCountdown1").addEventListener("click", function () {
-        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 45);
+        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 90);
     });
 
     document.getElementById("btnCountdown2").addEventListener("click", function () {
-        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5);
+        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 1);
     });
 
     document.getElementById("btn3").addEventListener("click", function () {
