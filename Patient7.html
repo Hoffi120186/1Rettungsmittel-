@@ -74,7 +74,7 @@
             font-size: 1.2em;
             cursor: pointer;
             text-align: center;
-            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
+            z-index: 2000;
         }
 
         #einsatzabbruchButton:hover {
@@ -123,22 +123,31 @@
 <!-- Buttons -->
 <div class="button-container">
     <button id="btn1" class="btn">
-        Pat. M 41 Jahre alt.<br>Der Pat. liegt auf dem RÜCKEN neben dem Fahrzeug.<br>Er reagiert nicht auf Ansprache<br>Aber auf Schmerzreiz.
+        Pat. M 41 Jahre alt.<br>Der Pat. liegt auf dem Rücken neben dem Fahrzeug.<br>
+        Der Pat. reagiert nicht auf Ansprache aber auf Schmerzreiz.<br>
+    
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btn2" class="btn hidden">
-        Die Atmung weißt ein schnarchendes Atemgeräusch vor.<br>Der Puls ist zentral und peripher gut tastbar.<br>Eine Kopfplatzwunde ist sichtbar.
+        Bei A ist ein schnarchendes Atemngeräusch warzunehmen<br>Der Puls ist zentral und peripher gut tastbar.<br>
+        Der Pat. war Insasse des Fahrzeuges.
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btnCountdown1" class="btn hidden">
-        Sofortmaßnahme einleiten? Ja<br><span id="countdown1" class="countdown"></span>
+        Sofortmaßnahme:<br>stabile Seitenlage<span id="countdown1" class="countdown"></span>
     </button>
     <button id="btnCountdown2" class="btn hidden">
-        Sofortmaßnahme einleiten? Nein<br><span id="countdown2" class="countdown"></span>
+        Sofortmaßnahm:<br>Einlage Guedeltubus<span id="countdown2" class="countdown"></span>
+    </button>
+    <button id="btnCountdown3" class="btn hidden">
+       Keine Sofortmaßnahme nötig <br><span id="countdown3" class="countdown"></span>
     </button>
     <button id="btn3" class="btn hidden">
-        Die Atemwege konnten mit der Sofortmaßnahme gesichert werden.<br>
+        Die Atemwege konnten vorerst gesichert werden
         <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btnCustom" class="btn hidden">
+      Keine Atmung vorhanden<br>Kein zentraler Puls tastbar
     </button>
     <button id="btn4" class="btn hidden">
         Sichtungskategorie wählen<br>und zum nächsten Patienten!
@@ -160,26 +169,26 @@
     let countdownIntervals = {};
 
     function toggleButtons(currentButtonId, nextButtonId) {
-        document.getElementById(currentButtonId).classList.add("hidden");
+        // Alle Buttons ausblenden
+        document.querySelectorAll(".btn").forEach(btn => btn.classList.add("hidden"));
+        // Nur den nächsten Button anzeigen
         document.getElementById(nextButtonId).classList.remove("hidden");
     }
 
-    function startCountdown(buttonId, countdownId, nextButtonId, otherButtonId, seconds) {
+    function startCountdown(buttonId, countdownId, nextButtonId, seconds) {
         let countdownElement = document.getElementById(countdownId);
         let timeLeft = seconds;
         countdownElement.style.visibility = "visible";
         countdownElement.innerText = timeLeft;
         document.getElementById(buttonId).disabled = true;
-        document.getElementById(otherButtonId).disabled = true;
 
         countdownIntervals[buttonId] = setInterval(() => {
             timeLeft--;
             countdownElement.innerText = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(countdownIntervals[buttonId]);
-                document.getElementById(buttonId).classList.add("hidden");
-                document.getElementById(otherButtonId).classList.add("hidden");
-                document.getElementById(nextButtonId).classList.remove("hidden");
+                // Nur den nächsten Button anzeigen
+                toggleButtons(buttonId, nextButtonId);
             }
         }, 1000);
     }
@@ -195,26 +204,35 @@
     document.getElementById("btn2").addEventListener("click", function () {
         toggleButtons("btn2", "btnCountdown1");
         document.getElementById("btnCountdown2").classList.remove("hidden");
+        document.getElementById("btnCountdown3").classList.remove("hidden");
         document.getElementById("modal").style.display = "flex"; // Bild wird angezeigt
     });
 
     document.getElementById("btnCountdown1").addEventListener("click", function () {
-        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 30);
+        startCountdown("btnCountdown1", "countdown1", "btn3", 30);
     });
 
     document.getElementById("btnCountdown2").addEventListener("click", function () {
-        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5);
+        startCountdown("btnCountdown2", "countdown2", "btn3", 45);
+    });
+
+    document.getElementById("btnCountdown3").addEventListener("click", function () {
+        startCountdown("btnCountdown3", "countdown3", "btnCustom", 01);
     });
 
     document.getElementById("btn3").addEventListener("click", function () {
         toggleButtons("btn3", "btn4");
     });
 
+    document.getElementById("btnCustom").addEventListener("click", function () {
+        toggleButtons("btnCustom", "btn4");
+    });
+
     document.getElementById("btn4").addEventListener("click", function () {
         redirectToIndex();
     });
 
-    // Schließen des Bildes durch Klick auf das Bild
+    // Schließen des Bildes durch Klick auf den Schließen-Button
     document.getElementById("closeModal").addEventListener("click", function () {
         document.getElementById("modal").style.display = "none";
     });
