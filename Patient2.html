@@ -74,7 +74,7 @@
             font-size: 1.2em;
             cursor: pointer;
             text-align: center;
-            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
+            z-index: 2000;
         }
 
         #einsatzabbruchButton:hover {
@@ -131,14 +131,20 @@
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btnCountdown1" class="btn hidden">
-        Sofortmaßnahme einleiten? Ja<br><span id="countdown1" class="countdown"></span>
+        Sofortmaßnahme: Tournequet<br><span id="countdown1" class="countdown"></span>
     </button>
     <button id="btnCountdown2" class="btn hidden">
-        Sofortmaßnahme einleiten? Nein<br><span id="countdown2" class="countdown"></span>
+        Sofortmaßnahm: Druckverband<br><span id="countdown2" class="countdown"></span>
+    </button>
+    <button id="btnCountdown3" class="btn hidden">
+       Keine Sofortmaßnahme <br><span id="countdown3" class="countdown"></span>
     </button>
     <button id="btn3" class="btn hidden">
-        Die Blutung konnte mit einer Sofortmaßnahme erstversorgt werden.
+        Die Blutung konnte mit der Sofortmaßnahme erstversorgt werden.
         <span>⬇ Weitere Informationen</span>
+    </button>
+    <button id="btnCustom" class="btn hidden">
+        Die Pat. wird bewusstlos<br>Keine Atmung vorhanden<br>Kein zentraler Puls tastbar
     </button>
     <button id="btn4" class="btn hidden">
         Sichtungskategorie wählen<br>und zum nächsten Patienten!
@@ -160,26 +166,26 @@
     let countdownIntervals = {};
 
     function toggleButtons(currentButtonId, nextButtonId) {
-        document.getElementById(currentButtonId).classList.add("hidden");
+        // Alle Buttons ausblenden
+        document.querySelectorAll(".btn").forEach(btn => btn.classList.add("hidden"));
+        // Nur den nächsten Button anzeigen
         document.getElementById(nextButtonId).classList.remove("hidden");
     }
 
-    function startCountdown(buttonId, countdownId, nextButtonId, otherButtonId, seconds) {
+    function startCountdown(buttonId, countdownId, nextButtonId, seconds) {
         let countdownElement = document.getElementById(countdownId);
         let timeLeft = seconds;
         countdownElement.style.visibility = "visible";
         countdownElement.innerText = timeLeft;
         document.getElementById(buttonId).disabled = true;
-        document.getElementById(otherButtonId).disabled = true;
 
         countdownIntervals[buttonId] = setInterval(() => {
             timeLeft--;
             countdownElement.innerText = timeLeft;
             if (timeLeft <= 0) {
                 clearInterval(countdownIntervals[buttonId]);
-                document.getElementById(buttonId).classList.add("hidden");
-                document.getElementById(otherButtonId).classList.add("hidden");
-                document.getElementById(nextButtonId).classList.remove("hidden");
+                // Nur den nächsten Button anzeigen
+                toggleButtons(buttonId, nextButtonId);
             }
         }, 1000);
     }
@@ -195,26 +201,35 @@
     document.getElementById("btn2").addEventListener("click", function () {
         toggleButtons("btn2", "btnCountdown1");
         document.getElementById("btnCountdown2").classList.remove("hidden");
+        document.getElementById("btnCountdown3").classList.remove("hidden");
         document.getElementById("modal").style.display = "flex"; // Bild wird angezeigt
     });
 
     document.getElementById("btnCountdown1").addEventListener("click", function () {
-        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 30);
+        startCountdown("btnCountdown1", "countdown1", "btn3", 30);
     });
 
     document.getElementById("btnCountdown2").addEventListener("click", function () {
-        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 30);
+        startCountdown("btnCountdown2", "countdown2", "btn3", 60);
+    });
+
+    document.getElementById("btnCountdown3").addEventListener("click", function () {
+        startCountdown("btnCountdown3", "countdown3", "btnCustom", 01);
     });
 
     document.getElementById("btn3").addEventListener("click", function () {
         toggleButtons("btn3", "btn4");
     });
 
+    document.getElementById("btnCustom").addEventListener("click", function () {
+        toggleButtons("btnCustom", "btn4");
+    });
+
     document.getElementById("btn4").addEventListener("click", function () {
         redirectToIndex();
     });
 
-    // Schließen des Bildes durch Klick auf das Bild
+    // Schließen des Bildes durch Klick auf den Schließen-Button
     document.getElementById("closeModal").addEventListener("click", function () {
         document.getElementById("modal").style.display = "none";
     });
