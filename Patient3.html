@@ -131,13 +131,13 @@
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btnCountdown1" class="btn hidden">
-        Sofortmaßnahme einleiten? Ja<br><span id="countdown1" class="countdown"></span>
+        Sofortmaßnahme: Betreuung<br>bis Rettung erfolgt?<span id="countdown1" class="countdown"></span>
     </button>
     <button id="btnCountdown2" class="btn hidden">
-        Sofortmaßnahme einleiten? Nein<br><span id="countdown2" class="countdown"></span>
+        Keine Sofortmaßnahme durchführbar<br><span id="countdown2" class="countdown"></span>
     </button>
     <button id="btn3" class="btn hidden">
-        Dem Pat. kann nicht geholfen werden.<br>Da er nicht schnell gerettet werden kann.
+        Dem Pat. kann nicht geholfen werden.<br>
         <span>⬇ Weitere Informationen</span>
     </button>
     <button id="btn4" class="btn hidden">
@@ -199,11 +199,11 @@
     });
 
     document.getElementById("btnCountdown1").addEventListener("click", function () {
-        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 5);
+        startCountdown("btnCountdown1", "countdown1", "btn3", "btnCountdown2", 90);
     });
 
     document.getElementById("btnCountdown2").addEventListener("click", function () {
-        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 5);
+        startCountdown("btnCountdown2", "countdown2", "btn3", "btnCountdown1", 1);
     });
 
     document.getElementById("btn3").addEventListener("click", function () {
