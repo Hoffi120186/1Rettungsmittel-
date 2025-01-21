@@ -49,7 +49,7 @@
             display: block;
             margin-top: 10px;
             font-size: 0.9em;
-            color: white;
+            color: red;
             font-weight: bold;
         }
 
@@ -62,9 +62,9 @@
         }
 
         #einsatzabbruchButton {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
+            position: absolute;
+            bottom: 30px;
+            left: 20%;
             transform: translateX(-50%);
             padding: 15px 30px;
             background-color: #e74c3c;
@@ -123,12 +123,12 @@
 <!-- Buttons -->
 <div class="button-container">
     <button id="btn1" class="btn">
-        Pat.M 38 Jahre alt.<br>Pat. klagt über starke Bauchschmerzen
-        <span>⬇ Weitere Informationen</span>
+        Pat.M 38 Jahre alt.<br>Er klagt über starke Bauchschmerzen<br>
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btn2" class="btn hidden">
        Der Pat. gibt an,<br>dass die Schmerzen durch den Aufprall verursacht wurden
-        <span>⬇ Weitere Informationen</span>
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btnCountdown1" class="btn hidden">
         Sofortmaßnahme: Beine hochlagern<br><span id="countdown1" class="countdown"></span>
@@ -140,14 +140,18 @@
        Keine Sofortmaßnahme <br><span id="countdown3" class="countdown"></span>
     </button>
     <button id="btn3" class="btn hidden">
-       Der Pat. hat weiter starke Schmerzen
-        <span>⬇ Weitere Informationen</span>
+       Der Pat. hat weiter starke Schmerzen<br>
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btnCustom" class="btn hidden">
-       Der Pat. hat weiter starke Schmerzen 
+       Der Pat. hat weiter starke Schmerzen
+       <br> 
+       <span>Weiter durch klicken</span>
     </button>
     <button id="btn4" class="btn hidden">
         Sichtungskategorie wählen<br>und zum nächsten Patienten!
+        <br>
+        <span>Weiter durch klicken</span> 
     </button>
 </div>
 
