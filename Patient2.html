@@ -49,12 +49,12 @@
             display: block;
             margin-top: 10px;
             font-size: 0.9em;
-            color: white;
+            color: rgb(231, 18, 18);
             font-weight: bold;
         }
 
         .btn:hover {
-            background-color: rgb(100, 100, 150);
+            background-color: rgb(141, 141, 153);
         }
 
         .hidden {
@@ -62,9 +62,9 @@
         }
 
         #einsatzabbruchButton {
-            position: fixed;
+            position: absolute;
             bottom: 20px;
-            left: 50%;
+            left: 30%;
             transform: translateX(-50%);
             padding: 15px 30px;
             background-color: #e74c3c;
@@ -115,6 +115,7 @@
             font-size: 1.2em;
             cursor: pointer;
             text-decoration: underline;
+            
         }
     </style>
 </head>
@@ -123,31 +124,33 @@
 <!-- Buttons -->
 <div class="button-container">
     <button id="btn1" class="btn">
-        Pat.W 28 Jahre alt.<br>Patientin wirkt blass, am Unterschenkel ist eine stark pulsierende Blutung zu sehen.
-        <span>⬇ Weitere Informationen</span>
+        Pat.W 28 Jahre alt.<br>Patientin ist AB-stabil<br>Am Unterschenkel<br>Ist eine stark pulsierende Blutung zu sehen
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btn2" class="btn hidden">
-        Die Pat. hat mehrere kleine Hämatome an den Armen.<br>Sie ist nicht eingeklemmt und frei zugänglich.
-        <span>⬇ Weitere Informationen</span>
+        Die Pat. hat mehrere Hämatome an den Armen<br>Sie ist nicht eingeklemmt<br> und frei zugänglich.
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btnCountdown1" class="btn hidden">
         Sofortmaßnahme: Tournequet<br><span id="countdown1" class="countdown"></span>
     </button>
     <button id="btnCountdown2" class="btn hidden">
-        Sofortmaßnahm: Druckverband<br><span id="countdown2" class="countdown"></span>
+        Sofortmaßnahme: Druckverband<br><span id="countdown2" class="countdown"></span>
     </button>
     <button id="btnCountdown3" class="btn hidden">
        Keine Sofortmaßnahme <br><span id="countdown3" class="countdown"></span>
     </button>
     <button id="btn3" class="btn hidden">
         Die Blutung konnte mit der Sofortmaßnahme erstversorgt werden.
-        <span>⬇ Weitere Informationen</span>
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btnCustom" class="btn hidden">
         Die Pat. wird bewusstlos<br>Keine Atmung vorhanden<br>Kein zentraler Puls tastbar
+        <span>Weiter durch klicken</span>
     </button>
     <button id="btn4" class="btn hidden">
         Sichtungskategorie wählen<br>und zum nächsten Patienten!
+        <span>Weiter durch klicken</span>
     </button>
 </div>
 
