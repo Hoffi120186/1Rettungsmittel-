@@ -9,6 +9,19 @@ const urlsToCache = [
   '/patient5.html',
   '/patient6.html',
   '/patient7.html',
+  '/patient8.html',
+  '/patient9.html',
+  '/patient10.html',
+  '/patient11.html',
+  '/patient12.html',
+  '/patient13.html',
+  '/patient14.html',
+  '/patient15.html',
+  '/patient16.html',
+  '/patient17.html',
+  '/patient18.html',
+  '/patient19.html',
+  '/patient20.html',
   '/Einstellungen.html',  // Alle Seiten, die offline verfügbar sein sollen
   '/styles.css',        // Deine CSS-Dateien
   '/app.js',            // Deine JS-Dateien
