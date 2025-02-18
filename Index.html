@@ -12,6 +12,7 @@
     <!-- Menüleiste -->
     <header>
         <button id="menuButton">☰ Menü</button>
+    
     </header>
 
     <!-- Kamera öffnen Hinweis -->
@@ -69,8 +70,6 @@
         <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const cameraButton = document.getElementById("cameraButton");
@@ -108,26 +107,19 @@
                         return;
                     }
 
-                    // iOS-spezifische Abfrage
-                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                        const stream = await navigator.mediaDevices.getUserMedia({
-                            video: { facingMode: "environment" }
-                        });
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment" } // Rückkamera bevorzugt
+                    });
 
-                        currentStream = stream;
-                        video.srcObject = stream;
-                        video.style.display = "block";
+                    currentStream = stream;
 
-                        video.onloadedmetadata = () => {
-                            video.play();
-                            canvas.width = video.videoWidth;
-                            canvas.height = video.videoHeight;
-                            startQRCodeDetection();
-                        };
-                    } else {
-                        alert("Dieses Gerät unterstützt keine QR-Code-Scan-Funktionalität.");
-                    }
+                    video.srcObject = stream;
+                    video.style.display = "block";
 
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        startQRCodeDetection();
+                    };
                 } catch (error) {
                     console.error("Kamera-Zugriff fehlgeschlagen:", error);
                     alert("Kamera-Zugriff fehlgeschlagen. Bitte Berechtigungen prüfen.");
@@ -136,19 +128,20 @@
 
             // QR-Code-Erkennung
             function startQRCodeDetection() {
-                const scanQRCode = () => {
-                    try {
-                        canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
-                        const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "dontInvert" });
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
 
-                        if (code) {
-                            window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
-                        } else {
-                            requestAnimationFrame(scanQRCode);
-                        }
-                    } catch (error) {
-                        console.error("Fehler beim Scannen:", error);
+                const scanQRCode = () => {
+                    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+
+                    if (code) {
+                        window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
+                    } else {
                         requestAnimationFrame(scanQRCode);
                     }
                 };
@@ -158,13 +151,7 @@
         });
     </script>
 
-    <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js")
-                .then(() => console.log("Service Worker registriert."))
-                .catch((error) => console.error("Service Worker Registrierung fehlgeschlagen:", error));
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
     <style>
         body {
@@ -196,8 +183,8 @@
             color: rgb(8, 0, 0);
             text-align: center;
             border-radius: 10px;
-            border: 8px solid transparent;
-            animation: blink 1s infinite;
+            border: 8px solid transparent; /* Standard transparenten Rand */
+            animation: blink 1s infinite; /* Blinken dauerhaft aktiv */
         }
 
         .camera-container {
@@ -255,15 +242,21 @@
             cursor: pointer;
         }
 
+        /* Hier beginnt die Anpassung */
+        /* Hover-Effekt für den Textbereich mit Blink-Effekt in Rot */
         .text-container:hover {
-            border: 9px solid red;
-            animation: blink 1s infinite;
+            border: 9px solid red; /* Roter Rand bei Hover */
+            animation: blink 1s infinite; /* Blinken des Rahmens */
+        
+          
         }
 
+        /* Schriftgröße im Textbereich */
         .text-container p {
-            font-size: 1.8em;
+            font-size: 1.8em; /* Größere Schrift */
         }
 
+        /* Blinkende Animation */
         @keyframes blink {
             0% { border-color: red; }
             50% { border-color: transparent; }
