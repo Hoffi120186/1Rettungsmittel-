@@ -12,7 +12,6 @@
     <!-- Menüleiste -->
     <header>
         <button id="menuButton">☰ Menü</button>
-    
     </header>
 
     <!-- Kamera öffnen Hinweis -->
@@ -70,6 +69,8 @@
         <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const cameraButton = document.getElementById("cameraButton");
@@ -112,12 +113,13 @@
                     });
 
                     currentStream = stream;
-
                     video.srcObject = stream;
                     video.style.display = "block";
 
                     video.onloadedmetadata = () => {
                         video.play();
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
                         startQRCodeDetection();
                     };
                 } catch (error) {
@@ -128,21 +130,19 @@
 
             // QR-Code-Erkennung
             function startQRCodeDetection() {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-
                 const scanQRCode = () => {
-                    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+                    try {
+                        canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+                        const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "dontInvert" });
 
-                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
-                        inversionAttempts: "dontInvert",
-                    });
-
-                    if (code) {
-                        window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
-                       
-                    } else {
+                        if (code) {
+                            window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
+                        } else {
+                            requestAnimationFrame(scanQRCode);
+                        }
+                    } catch (error) {
+                        console.error("Fehler beim Scannen:", error);
                         requestAnimationFrame(scanQRCode);
                     }
                 };
@@ -150,18 +150,15 @@
                 requestAnimationFrame(scanQRCode);
             }
         });
-</script>
-<script>
+    </script>
 
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-        .then(() => console.log("Service Worker registriert."))
-        .catch((error) => console.error("Service Worker Registrierung fehlgeschlagen:", error));
-}
-</script>
-</script>
-
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+                .then(() => console.log("Service Worker registriert."))
+                .catch((error) => console.error("Service Worker Registrierung fehlgeschlagen:", error));
+        }
+    </script>
 
     <style>
         body {
@@ -193,8 +190,8 @@ if ("serviceWorker" in navigator) {
             color: rgb(8, 0, 0);
             text-align: center;
             border-radius: 10px;
-            border: 8px solid transparent; /* Standard transparenten Rand */
-            animation: blink 1s infinite; /* Blinken dauerhaft aktiv */
+            border: 8px solid transparent;
+            animation: blink 1s infinite;
         }
 
         .camera-container {
@@ -252,21 +249,15 @@ if ("serviceWorker" in navigator) {
             cursor: pointer;
         }
 
-        /* Hier beginnt die Anpassung */
-        /* Hover-Effekt für den Textbereich mit Blink-Effekt in Rot */
         .text-container:hover {
-            border: 9px solid red; /* Roter Rand bei Hover */
-            animation: blink 1s infinite; /* Blinken des Rahmens */
-        
-          
+            border: 9px solid red;
+            animation: blink 1s infinite;
         }
 
-        /* Schriftgröße im Textbereich */
         .text-container p {
-            font-size: 1.8em; /* Größere Schrift */
+            font-size: 1.8em;
         }
 
-        /* Blinkende Animation */
         @keyframes blink {
             0% { border-color: red; }
             50% { border-color: transparent; }
