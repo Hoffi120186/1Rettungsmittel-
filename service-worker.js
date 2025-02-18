@@ -27,6 +27,19 @@ const urlsToCache = [
   '/patient18.html',
   '/patient19.html',
   '/patient20.html',
+  '/VU Arm Spritz.jpg',
+  '/VU Bauch.jpg',
+  '/VU Brillenhämatom.jpg',
+  '/VU Fraktur Arm.jpg',
+  '/VU SHT.jpg',
+  '/VU SHT2.jpg',
+  '/VU Sprunggelenk.jpg',
+'/VU Tod',
+'/VU TOD2Thorax',
+'/VU untersch.jpg',
+'/VU Unterschenkel beide.jpg',
+'/Mensch.jpg',
+'/apple-touch-icon.png',
   '/Einstellungen.html'
 ];
 
