@@ -4,7 +4,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR-Code Scanner</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" href="Logo App.jpg" type="image/jpeg">
+</head>
+<body>
+
+    <!-- Menüleiste -->
+    <header>
+        <button id="menuButton">☰ Menü</button>
+    
+    </header>
+
+    <!-- Kamera öffnen Hinweis -->
+    <main>
+        <div class="text-container">
+            <p>
+                <span style="font-size: 36px; display: block; margin-bottom: 25px;">VU mit 2 beteiligten PKW</span>
+                Bei Eintreffen an der Einsatzstelle sind mehrere Beteiligte Personen sichtbar<br>
+                Diese befinden sich in und um die Fahrzeuge verteilt.<br>
+                Die Einsatzstelle ist momentan keinen weiteren Gefahren ausgesetzt und man kann die Einsatzstelle begehen.<br>
+                Weiteres Vorgehen nach eigenen Vorgaben.
+            </p>
+        </div>
+        <div class="camera-container">
+            <button id="cameraButton" class="old-style-button">Patienten scannen</button>
+        </div>
+        <video id="video" autoplay playsinline style="display:none;"></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+    </main>
+
+    <!-- Modal für Menü -->
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <h2>Menü</h2>
+            <ul>
+                <li><a href="patient1.html">Patient1</a></li>
+                <li><a href="patient2.html">Patient2</a></li>
+                <li><a href="patient3.html">Patient3</a></li>
+                <li><a href="patient4.html">Patient4</a></li>
+                <li><a href="patient5.html">Patient5</a></li>
+                <li><a href="patient6.html">Patient6</a></li>
+                <li><a href="patient7.html">Patient7</a></li>
+                <li><a href="patient8.html">Patient8</a></li>
+                <li><a href="patient9.html">Patient9</a></li>
+                <li><a href="patient10.html">Patient10</a></li>
+                <li><a href="patient11.html">Patient11</a></li>
+                <li><a href="patient12.html">Patient12</a></li>
+                <li><a href="patient13.html">Patient13</a></li>
+                <li><a href="patient14.html">Patient14</a></li>
+                <li><a href="patient15.html">Patient15</a></li>
+                <li><a href="patient16.html">Patient16</a></li>
+                <li><a href="patient17.html">Patient17</a></li>
+                <li><a href="patient18.html">Patient18</a></li>
+                <li><a href="patient19.html">Patient19</a></li>
+                <li><a href="patient20.html">Patient20</a></li>
+                <li><a href="Einstellungen.html">Einstellungen</a></li>
+                <li><a href="#about">Über uns</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Einsatzabbruch Button -->
+    <div class="button-container">
+        <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const cameraButton = document.getElementById("cameraButton");
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const canvasContext = canvas.getContext('2d');
+            const menuButton = document.getElementById("menuButton");
+            const menuModal = document.getElementById("menuModal");
+            const closeButton = document.querySelector(".close");
+
+            let currentStream = null;
+
+            // Menü öffnen und schließen
+            menuButton.addEventListener("click", () => {
+                menuModal.style.display = "block";
+            });
+
+            closeButton.addEventListener("click", () => {
+                menuModal.style.display = "none";
+            });
+
+            window.addEventListener("click", (event) => {
+                if (event.target === menuModal) {
+                    menuModal.style.display = "none";
+                }
+            });
+
+            // Kamera starten
+            cameraButton.addEventListener("click", async () => {
+                try {
+                    cameraButton.style.display = "none";
+
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        alert("Die Kamera-API wird von diesem Gerät nicht unterstützt.");
+                        return;
+                    }
+
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment" } // Rückkamera bevorzugt
+                    });
+
+                    currentStream = stream;
+
+                    video.srcObject = stream;
+                    video.style.display = "block";
+
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        startQRCodeDetection();
+                    };
+                } catch (error) {
+                    console.error("Kamera-Zugriff fehlgeschlagen:", error);
+                    alert("Kamera-Zugriff fehlgeschlagen. Bitte Berechtigungen prüfen.");
+                }
+            });
+
+            // QR-Code-Erkennung
+            function startQRCodeDetection() {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                const scanQRCode = () => {
+                    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+
+                    if (code) {
+                        window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
+                       
+                    } else {
+                        requestAnimationFrame(scanQRCode);
+                    }
+                };
+
+                requestAnimationFrame(scanQRCode);
+            }
+        });
+</script>
+<script>
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker registriert."))
+        .catch((error) => console.error("Service Worker Registrierung fehlgeschlagen:", error));
+}
+</script>
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,7 +172,6 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            position: relative;
         }
 
         #menuButton {
@@ -25,7 +182,6 @@
             border: black;
             font-size: 1.9em;
             cursor: pointer;
-            z-index: 10;
         }
 
         .text-container {
@@ -37,14 +193,13 @@
             color: rgb(8, 0, 0);
             text-align: center;
             border-radius: 10px;
-            border: 8px solid transparent;
-            animation: blink 1s infinite;
+            border: 8px solid transparent; /* Standard transparenten Rand */
+            animation: blink 1s infinite; /* Blinken dauerhaft aktiv */
         }
 
         .camera-container {
             margin-top: 20px;
             text-align: center;
-            z-index: 10;
         }
 
         #cameraButton {
@@ -57,31 +212,35 @@
             cursor: pointer;
         }
 
-        #video {
-            position: absolute;
+        #menuModal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 60vh; /* Höhe auf 60% des Viewports setzen */
-            object-fit: cover;
-            z-index: -1;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
         }
 
-        #canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 60vh; /* Canvas auf gleiche Höhe wie Video setzen */
-            z-index: 1;
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
         }
 
         .button-container {
-            position: fixed;
+            position: absolute;
             bottom: 30px;
             width: 100%;
             text-align: center;
-            z-index: 10;
         }
 
         #einsatzabbruchButton {
@@ -93,99 +252,26 @@
             cursor: pointer;
         }
 
+        /* Hier beginnt die Anpassung */
+        /* Hover-Effekt für den Textbereich mit Blink-Effekt in Rot */
+        .text-container:hover {
+            border: 9px solid red; /* Roter Rand bei Hover */
+            animation: blink 1s infinite; /* Blinken des Rahmens */
+        
+          
+        }
+
+        /* Schriftgröße im Textbereich */
+        .text-container p {
+            font-size: 1.8em; /* Größere Schrift */
+        }
+
+        /* Blinkende Animation */
         @keyframes blink {
             0% { border-color: red; }
             50% { border-color: transparent; }
             100% { border-color: red; }
         }
     </style>
-</head>
-<body>
-
-    <header>
-        <button id="menuButton">☰ Menü</button>
-    </header>
-
-    <main>
-        <div class="text-container">
-            <p>
-                <span style="font-size: 36px; display: block; margin-bottom: 25px;">VU mit 2 beteiligten PKW</span>
-                Bei Eintreffen an der Einsatzstelle sind mehrere Beteiligte Personen sichtbar<br>
-                Diese befinden sich in und um die Fahrzeuge verteilt.<br>
-                Die Einsatzstelle ist momentan keinen weiteren Gefahren ausgesetzt und man kann die Einsatzstelle begehen.<br>
-                Weiteres Vorgehen nach eigenen Vorgaben.
-            </p>
-        </div>
-        <div class="camera-container">
-            <button id="cameraButton">Patienten scannen</button>
-        </div>
-        <video id="video" autoplay playsinline style="display:none;"></video>
-        <canvas id="canvas"></canvas>
-    </main>
-
-    <div class="button-container">
-        <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const cameraButton = document.getElementById("cameraButton");
-            const video = document.getElementById("video");
-            const canvas = document.getElementById("canvas");
-            const canvasContext = canvas.getContext('2d');
-
-            let currentStream = null;
-
-            cameraButton.addEventListener("click", async () => {
-                try {
-                    cameraButton.style.display = "none"; // Scannen-Button ausblenden
-
-                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                        alert("Die Kamera-API wird von diesem Gerät nicht unterstützt.");
-                        return;
-                    }
-
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: "environment" } // Rückkamera bevorzugt
-                    });
-
-                    currentStream = stream;
-                    video.srcObject = stream;
-                    video.style.display = "block"; // Video im Vordergrund anzeigen
-
-                    video.onloadedmetadata = () => {
-                        video.play();
-                        startQRCodeDetection();
-                    };
-                } catch (error) {
-                    console.error("Kamera-Zugriff fehlgeschlagen:", error);
-                    alert("Kamera-Zugriff fehlgeschlagen. Bitte Berechtigungen prüfen.");
-                }
-            });
-
-            function startQRCodeDetection() {
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-
-                const scanQRCode = () => {
-                    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
-                    const code = jsQR(imageData.data, canvas.width, canvas.height);
-
-                    if (code) {
-                        alert("QR-Code erkannt: " + code.data);
-                        window.open(code.data, "_self"); // Seite im selben Tab öffnen
-                    } else {
-                        requestAnimationFrame(scanQRCode);
-                    }
-                };
-
-                requestAnimationFrame(scanQRCode);
-            }
-        });
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
 </body>
 </html>
