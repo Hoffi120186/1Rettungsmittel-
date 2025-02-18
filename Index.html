@@ -73,7 +73,12 @@
         }
 
         #canvas {
-            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 80vh; /* Canvas auf gleiche Größe wie Video */
+            z-index: 1; /* Canvas im Vordergrund */
         }
 
         /* Einsatzabbruch Button */
