@@ -108,20 +108,26 @@
                         return;
                     }
 
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: "environment" } // Rückkamera bevorzugt
-                    });
+                    // iOS-spezifische Abfrage
+                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                        const stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: "environment" }
+                        });
 
-                    currentStream = stream;
-                    video.srcObject = stream;
-                    video.style.display = "block";
+                        currentStream = stream;
+                        video.srcObject = stream;
+                        video.style.display = "block";
 
-                    video.onloadedmetadata = () => {
-                        video.play();
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        startQRCodeDetection();
-                    };
+                        video.onloadedmetadata = () => {
+                            video.play();
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+                            startQRCodeDetection();
+                        };
+                    } else {
+                        alert("Dieses Gerät unterstützt keine QR-Code-Scan-Funktionalität.");
+                    }
+
                 } catch (error) {
                     console.error("Kamera-Zugriff fehlgeschlagen:", error);
                     alert("Kamera-Zugriff fehlgeschlagen. Bitte Berechtigungen prüfen.");
