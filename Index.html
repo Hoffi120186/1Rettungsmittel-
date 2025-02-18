@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR-Code Scanner</title>
-    <link rel="manifest" href="manifest.json">
     <link rel="icon" href="Logo App.jpg" type="image/jpeg">
     <style>
         body {
@@ -18,7 +17,6 @@
             position: relative;
         }
 
-        /* Menü Button */
         #menuButton {
             position: absolute;
             left: 15px;
@@ -30,7 +28,6 @@
             z-index: 10;
         }
 
-        /* Text Container */
         .text-container {
             margin: auto;
             margin-top: 50px;
@@ -40,15 +37,14 @@
             color: rgb(8, 0, 0);
             text-align: center;
             border-radius: 10px;
-            border: 8px solid transparent; /* Standard transparenten Rand */
-            animation: blink 1s infinite; /* Blinken dauerhaft aktiv */
+            border: 8px solid transparent;
+            animation: blink 1s infinite;
         }
 
-        /* Kamera Container (der Scannen-Button) */
         .camera-container {
             margin-top: 20px;
             text-align: center;
-            z-index: 10; /* Button im Vordergrund */
+            z-index: 10;
         }
 
         #cameraButton {
@@ -61,15 +57,14 @@
             cursor: pointer;
         }
 
-        /* Kamera (Videoframe) */
         #video {
             position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 80vh; /* Höhe auf 80% des Bildschirms setzen */
+            height: 80vh;
             object-fit: cover;
-            z-index: -1; /* Kamera im Hintergrund */
+            z-index: -1;
         }
 
         #canvas {
@@ -77,17 +72,16 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 80vh; /* Canvas auf gleiche Größe wie Video */
-            z-index: 1; /* Canvas im Vordergrund */
+            height: 80vh;
+            z-index: 1;
         }
 
-        /* Einsatzabbruch Button */
         .button-container {
             position: fixed;
             bottom: 30px;
             width: 100%;
             text-align: center;
-            z-index: 10; /* Button im Vordergrund */
+            z-index: 10;
         }
 
         #einsatzabbruchButton {
@@ -99,7 +93,6 @@
             cursor: pointer;
         }
 
-        /* Blinkende Animation */
         @keyframes blink {
             0% { border-color: red; }
             50% { border-color: transparent; }
@@ -109,12 +102,10 @@
 </head>
 <body>
 
-    <!-- Menüleiste -->
     <header>
         <button id="menuButton">☰ Menü</button>
     </header>
 
-    <!-- Kamera öffnen Hinweis -->
     <main>
         <div class="text-container">
             <p>
@@ -132,39 +123,6 @@
         <canvas id="canvas"></canvas>
     </main>
 
-    <!-- Modal für Menü -->
-    <div id="menuModal" class="modal">
-        <div class="modal-content">
-            <span class="close">×</span>
-            <h2>Menü</h2>
-            <ul>
-                <li><a href="patient1.html">Patient1</a></li>
-                <li><a href="patient2.html">Patient2</a></li>
-                <li><a href="patient3.html">Patient3</a></li>
-                <li><a href="patient4.html">Patient4</a></li>
-                <li><a href="patient5.html">Patient5</a></li>
-                <li><a href="patient6.html">Patient6</a></li>
-                <li><a href="patient7.html">Patient7</a></li>
-                <li><a href="patient8.html">Patient8</a></li>
-                <li><a href="patient9.html">Patient9</a></li>
-                <li><a href="patient10.html">Patient10</a></li>
-                <li><a href="patient11.html">Patient11</a></li>
-                <li><a href="patient12.html">Patient12</a></li>
-                <li><a href="patient13.html">Patient13</a></li>
-                <li><a href="patient14.html">Patient14</a></li>
-                <li><a href="patient15.html">Patient15</a></li>
-                <li><a href="patient16.html">Patient16</a></li>
-                <li><a href="patient17.html">Patient17</a></li>
-                <li><a href="patient18.html">Patient18</a></li>
-                <li><a href="patient19.html">Patient19</a></li>
-                <li><a href="patient20.html">Patient20</a></li>
-                <li><a href="Einstellungen.html">Einstellungen</a></li>
-                <li><a href="#about">Über uns</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Einsatzabbruch Button -->
     <div class="button-container">
         <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
     </div>
@@ -175,28 +133,9 @@
             const video = document.getElementById("video");
             const canvas = document.getElementById("canvas");
             const canvasContext = canvas.getContext('2d');
-            const menuButton = document.getElementById("menuButton");
-            const menuModal = document.getElementById("menuModal");
-            const closeButton = document.querySelector(".close");
 
             let currentStream = null;
 
-            // Menü öffnen und schließen
-            menuButton.addEventListener("click", () => {
-                menuModal.style.display = "block";
-            });
-
-            closeButton.addEventListener("click", () => {
-                menuModal.style.display = "none";
-            });
-
-            window.addEventListener("click", (event) => {
-                if (event.target === menuModal) {
-                    menuModal.style.display = "none";
-                }
-            });
-
-            // Kamera starten
             cameraButton.addEventListener("click", async () => {
                 try {
                     cameraButton.style.display = "none"; // Scannen-Button ausblenden
@@ -211,7 +150,6 @@
                     });
 
                     currentStream = stream;
-
                     video.srcObject = stream;
                     video.style.display = "block"; // Video im Vordergrund anzeigen
 
@@ -225,7 +163,6 @@
                 }
             });
 
-            // QR-Code-Erkennung
             function startQRCodeDetection() {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
@@ -233,13 +170,11 @@
                 const scanQRCode = () => {
                     canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
                     const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
-
-                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
-                        inversionAttempts: "dontInvert",
-                    });
+                    const code = jsQR(imageData.data, canvas.width, canvas.height);
 
                     if (code) {
-                        window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
+                        alert("QR-Code erkannt: " + code.data);
+                        window.open(code.data, "_self"); // Seite im selben Tab öffnen
                     } else {
                         requestAnimationFrame(scanQRCode);
                     }
