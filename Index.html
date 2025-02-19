@@ -201,7 +201,7 @@
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     const code = jsQR(imageData.data, imageData.width, imageData.height);
                     if (code) {
-                      
+                       window.location.href = code.data; // Hier erfolgt die Weiterleitung
                         video.srcObject.getTracks().forEach(track => track.stop());
                         video.style.display = "none";
                     } else {
