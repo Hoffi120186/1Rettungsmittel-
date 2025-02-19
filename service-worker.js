@@ -1,5 +1,6 @@
-const CACHE_NAME = 'offline-cache-v1';
+const CACHE_NAME = 'offline-cache-v2'; // Version aktualisieren, damit alte Caches gelöscht werden
 const OFFLINE_FALLBACK_PAGE = '/offline.html';  // Fallback-Seite
+
 const urlsToCache = [
   '/', '/index.html', '/Einstellungen.html',
   '/styles.css', '/app.js',
@@ -17,22 +18,9 @@ const urlsToCache = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // URLs nacheinander abrufen und cachen, bei Fehlern die nicht existierenden Seiten ignorieren
-      return Promise.all(
-        urlsToCache.map((url) => {
-          return fetch(url)
-            .then((response) => {
-              if (response.ok) {
-                return cache.add(url); // Nur hinzufügen, wenn die Ressource erfolgreich abgerufen wurde
-              } else {
-                console.warn(`Ressource konnte nicht abgerufen werden: ${url}`);
-              }
-            })
-            .catch((error) => {
-              console.error(`Fehler beim Abrufen von ${url}:`, error);
-            });
-        })
-      );
+      return cache.addAll(urlsToCache).catch((error) => {
+        console.warn("Einige Ressourcen konnten nicht gecacht werden:", error);
+      });
     })
   );
 });
@@ -53,14 +41,25 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Caching der Antworten und offline arbeiten
+// Fetch-Event: Holt Ressourcen aus dem Cache oder speichert neue Inhalte
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        return cachedResponse || fetch(event.request).catch(() => {
-          return caches.match(OFFLINE_FALLBACK_PAGE); // Fallback bei fehlendem Cache & ohne Internet
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse; // Falls im Cache, direkt liefern
+      }
+      return fetch(event.request)
+        .then((response) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, response.clone()); // Neue Datei speichern
+            return response;
+          });
+        })
+        .catch(() => {
+          if (event.request.destination === 'document') {
+            return caches.match(OFFLINE_FALLBACK_PAGE); // Zeige Offline-Seite für HTML
+          }
         });
-      })
+    })
   );
 });
