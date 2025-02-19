@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-Code Scanner</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="Logo App.jpg" type="image/jpeg">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.3.1/jsQR.min.js"></script>
+    <style>
+        @keyframes blaulicht {
+            0% { background-color: blue; }
+            50% { background-color: black; }
+            100% { background-color: blue; }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            animation: blaulicht 1.5s infinite ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #menuButton {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: none;
+            color: white;
+            font-size: 1.9em;
+            cursor: pointer;
+            border: none;
+        }
+
+        .image-container img {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+
+        .camera-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #cameraButton {
+            padding: 40px 60px;
+            font-size: 1.8em;
+            background-color: #fa0d0d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        video {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+        }
+
+        /* Menü-Styling */
+        #menuModal {
+            display: none;
+            position: absolute;
+            top: 30;
+            left: 0;
+            width: 30%;
+            height: 30%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            width: 80%;
+            max-width: 300px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-content ul li {
+            margin: 10px 0;
+        }
+
+        .modal-content ul li a {
+            text-decoration: none;
+            font-size: 1.2em;
+            color: black;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <button id="menuButton">☰ Menü</button>
+    </header>
+
+    <main>
+        <div class="image-container">
+            <img src="MelderMesser.jpg" alt="Alarmbild">
+        </div>
+        <div class="camera-container">
+            <button id="cameraButton">Status 4 Einsatzstelle erreicht
+            </button>
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+    </main>
+
+    <!-- Menü-Modal -->
+    <div id="menuModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Menü</h2>
+            <ul>
+                <li><a href="patient1.html">Patient1</a></li>
+                <li><a href="patient2.html">Patient2</a></li>
+                <li><a href="patient3.html">Patient3</a></li>
+                <li><a href="patient4.html">Patient4</a></li>
+                <li><a href="patient5.html">Patient5</a></li>
+                <li><a href="patient6.html">Patient6</a></li>
+                <li><a href="patient7.html">Patient7</a></li>
+                <li><a href="patient8.html">Patient8</a></li>
+                <li><a href="patient9.html">Patient9</a></li>
+                <li><a href="patient10.html">Patient10</a></li>
+                <li><a href="patient11.html">Patient11</a></li>
+                <li><a href="patient12.html">Patient12</a></li>
+                <li><a href="patient13.html">Patient13</a></li>
+                <li><a href="patient14.html">Patient14</a></li>
+                <li><a href="patient15.html">Patient15</a></li>
+                <li><a href="patient16.html">Patient16</a></li>
+                <li><a href="patient17.html">Patient17</a></li>
+                <li><a href="patient18.html">Patient18</a></li>
+                <li><a href="patient19.html">Patient19</a></li>
+                <li><a href="patient20.html">Patient20</a></li>
+                <li><a href="Einstellungen.html">Einstellungen</a></li>
+                <li><a href="#about">Über uns</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Menü-Button öffnen/schließen
+        document.getElementById("menuButton").addEventListener("click", function () {
+            document.getElementById("menuModal").style.display = "flex";
+        });
+
+        document.querySelector(".close").addEventListener("click", function () {
+            document.getElementById("menuModal").style.display = "none";
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === document.getElementById("menuModal")) {
+                document.getElementById("menuModal").style.display = "none";
+            }
+        });
+
+        // QR-Code-Scanner aktivieren
+        document.getElementById("cameraButton").addEventListener("click", () => {
+            const video = document.getElementById("video");
+            video.style.display = "block";
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+                .then(stream => {
+                    video.srcObject = stream;
+                    scanQRCode(video);
+                })
+                .catch(err => console.error("Fehler beim Zugriff auf die Kamera:", err));
+        });
+
+        function scanQRCode(video) {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            function captureFrame() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+                    if (code) {
+                        alert("QR-Code erkannt: " + code.data);
+                        video.srcObject.getTracks().forEach(track => track.stop());
+                        video.style.display = "none";
+                    } else {
+                        requestAnimationFrame(captureFrame);
+                    }
+                } else {
+                    requestAnimationFrame(captureFrame);
+                }
+            }
+            captureFrame();
+        }
+    </script>
+
+</body>
+</html>
