@@ -6,7 +6,7 @@ const urlsToCache = [
   '/icons/icon-192x192.png', '/icons/icon-512x512.png',
   '/offline.html', // Wichtig für Offline-Fallback
   // Deine Patientenseiten
-  '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html', 
+  '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html',
   '/patient5.html', '/patient6.html', '/patient7.html', '/patient8.html',
   '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
   '/patient13.html', '/patient14.html', '/patient15.html', '/patient16.html',
@@ -16,10 +16,24 @@ const urlsToCache = [
 // Installieren und Caching der Dateien
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      // URLs nacheinander abrufen und cachen, bei Fehlern die nicht existierenden Seiten ignorieren
+      return Promise.all(
+        urlsToCache.map((url) => {
+          return fetch(url)
+            .then((response) => {
+              if (response.ok) {
+                return cache.add(url); // Nur hinzufügen, wenn die Ressource erfolgreich abgerufen wurde
+              } else {
+                console.warn(`Ressource konnte nicht abgerufen werden: ${url}`);
+              }
+            })
+            .catch((error) => {
+              console.error(`Fehler beim Abrufen von ${url}:`, error);
+            });
+        })
+      );
+    })
   );
 });
 
