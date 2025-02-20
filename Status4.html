@@ -237,12 +237,23 @@
         }
 
         #einsatzabbruchButton {
-            padding: 15px 15px;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
             background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 50px;
+            font-size: 1.2em;
             cursor: pointer;
+            text-align: center;
+            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
+        }
+
+        #einsatzabbruchButton:hover {
+            background-color: #c0392b;
         }
 
         /* Hier beginnt die Anpassung */
