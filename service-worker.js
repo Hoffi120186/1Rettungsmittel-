@@ -1,4 +1,4 @@
-const CACHE_NAME = 'offline-cache-v5';
+const CACHE_NAME = 'offline-cache-v6';
 const OFFLINE_FALLBACK_PAGE = '/offline.html';
 
 const urlsToCache = [
