@@ -155,8 +155,14 @@
     </div>
 </div>
 
-<!-- Einsatzabbruch-Button -->
-<a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
+<button id="einsatzabbruchButton">Einsatzabbruch</button>
+
+<script>
+    document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
+        window.location.href = "/status4.html";
+    });
+</script>
+
 
 <script>
     let countdownIntervals = {};
@@ -187,7 +193,7 @@
     }
 
     function redirectToIndex() {
-        window.location.href = "index.html";
+        window.location.href = "/status4.html";
     }
 
     document.getElementById("btn1").addEventListener("click", function () {
