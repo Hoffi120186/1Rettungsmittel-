@@ -7,7 +7,7 @@ const urlsToCache = [
   '/icons/icon-192x192.png', '/icons/icon-512x512.png',
   '/offline.html',
   '/Logo%20App.jpg', '/MelderVU.jpg',
-  // Patientenseiten (explizit cachen)
+  // Patientenseiten
   '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html',
   '/patient5.html', '/patient6.html', '/patient7.html', '/patient8.html',
   '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
@@ -23,7 +23,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
       console.log('[Service Worker] Caching der Dateien beginnt...');
-
+      
       for (const url of urlsToCache) {
         try {
           const response = await fetch(url);
@@ -54,8 +54,6 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-
-  self.clients.claim(); // Sofort Kontrolle über alle Seiten übernehmen
 });
 
 // Fetch-Handler mit Offline-Unterstützung
@@ -69,21 +67,20 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
-      // Hier wird die Netzwerkanfrage ausgeführt
+      console.log(`[Service Worker] Antwort aus Netzwerk: ${event.request.url}`);
       return fetch(event.request)
         .then((response) => {
-          // Cache für alle erfolgreichen Antworten aktualisieren
-          return caches.open(CACHE_NAME).then((cache) => {
-            // Nur HTML-Seiten und dynamische Inhalte cachen
-            if (response.ok && event.request.url.endsWith('.html')) {
+          // Überprüfen, ob es sich um eine HTML-Seite handelt
+          if (event.request.url.endsWith('.html')) {
+            return caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, response.clone());
               console.log(`[Service Worker] Gespeichert: ${event.request.url}`);
-            }
-            return response;
-          });
+              return response;
+            });
+          }
+          return response;
         })
         .catch(() => {
-          // Wenn Netzwerkanfrage fehl schlägt, Offline-Fallback anzeigen
           console.warn(`[Service Worker] Netzwerkanfrage fehlgeschlagen, Offline-Fallback für: ${event.request.url}`);
           return caches.match(OFFLINE_FALLBACK_PAGE);
         });
