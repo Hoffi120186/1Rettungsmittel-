@@ -65,11 +65,18 @@
         </div>
     </div>
 
-   <button id="einsatzabbruchButton">Einsatzabbruch</button>
+<div class="button-container">
+    <button id="zurueckButton">Zurück zur Startseite</button>
+    <button id="einsatzabbruchButton">Einsatzabbruch</button>
+</div>
 
 <script>
     document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
         window.location.href = "/status4.html";
+    });
+
+    document.getElementById("zurueckButton").addEventListener("click", function () {
+        window.location.href = "/index.html";
     });
 </script>
 
@@ -251,6 +258,40 @@
             text-align: center;
             z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
         }
+        <style>
+    .button-container {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+    }
+
+    #einsatzabbruchButton, #zurueckButton {
+        padding: 15px 30px;
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.2em;
+        cursor: pointer;
+        text-align: center;
+        z-index: 2000;
+    }
+
+    #zurueckButton {
+        background-color: #3498db;
+    }
+
+    #zurueckButton:hover {
+        background-color: #2980b9;
+    }
+
+    #einsatzabbruchButton:hover {
+        background-color: #c0392b;
+    }
+</style>
 
         #einsatzabbruchButton:hover {
             background-color: #c0392b;
