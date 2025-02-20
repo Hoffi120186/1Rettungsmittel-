@@ -1,6 +1,7 @@
 const CACHE_NAME = 'offline-cache-v6';
 const OFFLINE_FALLBACK_PAGE = '/offline.html';
 
+// Alle URLs zum Caching hinzufügen
 const urlsToCache = [
   '/', '/index.html',
   '/offline.html',
@@ -9,7 +10,8 @@ const urlsToCache = [
   '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html',
   '/patient5.html', '/patient6.html', '/patient7.html', '/patient8.html',
   '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
-  '/patient13.html', '/patient14.html','/Status4.html','https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
+  '/patient13.html', '/patient14.html', '/Status4.html', 
+  'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
   '/manifest.json',
 ];
 
@@ -18,19 +20,16 @@ self.addEventListener('install', (event) => {
   console.log('[Service Worker] Install Event');
 
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
+    caches.open(CACHE_NAME).then((cache) => {
       console.log('[Service Worker] Caching der Dateien beginnt...');
-      
-      for (const url of urlsToCache) {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          await cache.put(url, response);
-          console.log(`[Service Worker] Gespeichert: ${url}`);
-        } catch (error) {
-          console.warn(`[Service Worker] Fehler beim Cachen von ${url}:`, error);
-        }
-      }
+      // Verwende addAll, um alle URLs auf einmal zu cachen
+      return cache.addAll(urlsToCache)
+        .then(() => {
+          console.log('[Service Worker] Alle Dateien wurden erfolgreich gecacht');
+        })
+        .catch((error) => {
+          console.warn('[Service Worker] Fehler beim Caching:', error);
+        });
     })
   );
 });
@@ -44,7 +43,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log("[Service Worker] Lösche alten Cache:", cache);
+            console.log('[Service Worker] Lösche alten Cache:', cache);
             return caches.delete(cache);
           }
         })
@@ -59,15 +58,17 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
+      // Wenn die Antwort aus dem Cache verfügbar ist, diese verwenden
       if (cachedResponse) {
         console.log(`[Service Worker] Antwort aus Cache: ${event.request.url}`);
         return cachedResponse;
       }
 
       console.log(`[Service Worker] Antwort aus Netzwerk: ${event.request.url}`);
+
       return fetch(event.request)
         .then((response) => {
-          // Überprüfen, ob es sich um eine HTML-Seite handelt
+          // Überprüfen, ob es sich um eine HTML-Seite handelt, und in den Cache speichern
           if (event.request.url.endsWith('.html')) {
             return caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, response.clone());
@@ -75,9 +76,11 @@ self.addEventListener('fetch', (event) => {
               return response;
             });
           }
-          return response;
+
+          return response; // Andere Dateitypen nicht cachen
         })
         .catch(() => {
+          // Bei einem Fehler: Offline-Fallback-Seite bereitstellen
           console.warn(`[Service Worker] Netzwerkanfrage fehlgeschlagen, Offline-Fallback für: ${event.request.url}`);
           return caches.match(OFFLINE_FALLBACK_PAGE);
         });
