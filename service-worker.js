@@ -16,67 +16,68 @@ const urlsToCache = [
   '/Status4.html'
 ];
 
+// 🔵 INSTALL-EVENT → Dateien zwischenspeichern
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Install Event');
+
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return Promise.all(
-        urlsToCache.map(url => {
-          return fetch(url)
-            .then(response => {
-              if (!response || response.status !== 200 || response.type !== 'basic') {
-                console.warn(`[Service Worker] Nicht gecacht: ${url} (Status: ${response.status})`);
-                return;
-              }
-              return cache.put(url, response.clone());
-            })
-            .catch(error => {
-              console.warn(`[Service Worker] Fehler beim Cachen von ${url}:`, error);
-            });
-        })
-      );
+    caches.open(CACHE_NAME).then(async (cache) => {
+      console.log('[Service Worker] Caching startet...');
+      return cache.addAll(urlsToCache);
     })
   );
+
+  self.skipWaiting(); // Service Worker sofort aktivieren
 });
 
+// 🟢 ACTIVATE → Alten Cache löschen und neuen aktivieren
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Aktiviert');
+
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[Service Worker] Lösche alten Cache:', cache);
+            console.log("[Service Worker] Lösche alten Cache:", cache);
             return caches.delete(cache);
           }
         })
       );
     })
   );
+
+  self.clients.claim(); // Sofort Kontrolle über alle Seiten übernehmen
 });
 
+// 🟡 FETCH → Offline-Verhalten verbessern
 self.addEventListener('fetch', (event) => {
   console.log(`[Service Worker] Fetch: ${event.request.url}`);
+
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-        return caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, response.clone());
-          return response;
-        });
-      })
-      .catch(() => {
-        return caches.match(event.request).then(cachedResponse => {
-          if (cachedResponse) {
-            console.log(`[Service Worker] Antwort aus Cache: ${event.request.url}`);
-            return cachedResponse;
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        console.log(`[Service Worker] Antwort aus Cache: ${event.request.url}`);
+        return cachedResponse;
+      }
+
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (!networkResponse || networkResponse.status !== 200) {
+            throw new Error("Netzwerkantwort ungültig");
           }
-          console.warn(`[Service Worker] Netzwerkanfrage fehlgeschlagen, Offline-Fallback: ${event.request.url}`);
+
+          // Gecachte Dateien beim ersten Abruf speichern
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone());
+            console.log(`[Service Worker] Ressource gespeichert: ${event.request.url}`);
+            return networkResponse;
+          });
+        })
+        .catch(() => {
+          console.warn(`[Service Worker] Netzwerkanfrage fehlgeschlagen, Offline-Fallback für: ${event.request.url}`);
           return caches.match(OFFLINE_FALLBACK_PAGE);
         });
-      })
+    })
   );
 });
