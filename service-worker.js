@@ -12,7 +12,7 @@ const urlsToCache = [
   '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
   '/patient13.html', '/patient14.html', '/Status4.html', 
   'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js',
-  '/manifest.json',
+  '/manifest.json','/Mensch.jpg','/VU Arm Spritz.jpg','/VU SHT.jpg','/VU SHT2.jpg'
 ];
 
 // Service Worker installieren & Dateien cachen
