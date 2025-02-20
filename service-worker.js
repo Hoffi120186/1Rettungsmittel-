@@ -57,7 +57,8 @@ self.addEventListener('fetch', (event) => {
   console.log(`[Service Worker] Fetch: ${event.request.url}`);
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+   caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+
       // Wenn die Antwort aus dem Cache verfügbar ist, diese verwenden
       if (cachedResponse) {
         console.log(`[Service Worker] Antwort aus Cache: ${event.request.url}`);
