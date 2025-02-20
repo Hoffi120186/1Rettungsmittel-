@@ -12,6 +12,7 @@
     <!-- Menüleiste -->
     <header>
         <button id="menuButton">☰ Menü</button>
+    
     </header>
 
     <!-- Kamera öffnen Hinweis -->
@@ -64,25 +65,102 @@
         </div>
     </div>
 
-    <!-- Button Container für Einsatzabbruch & Zurück zur Startseite -->
-    <div class="button-container">
-        <button id="einsatzabbruchButton">Einsatzabbruch</button>
-        <button id="zurueckButton">Zurück zur Startseite</button>
-    </div>
+   <button id="einsatzabbruchButton">Einsatzabbruch</button>
+
+<script>
+    document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
+        window.location.href = "/status4.html";
+    });
+</script>
 
     <script>
-        document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
-            window.location.href = "/status4.html";
-        });
+        document.addEventListener("DOMContentLoaded", () => {
+            const cameraButton = document.getElementById("cameraButton");
+            const video = document.getElementById("video");
+            const canvas = document.getElementById("canvas");
+            const canvasContext = canvas.getContext('2d');
+            const menuButton = document.getElementById("menuButton");
+            const menuModal = document.getElementById("menuModal");
+            const closeButton = document.querySelector(".close");
 
-        document.getElementById("zurueckButton").addEventListener("click", function () {
-            window.location.href = "/index.html";
+            let currentStream = null;
+
+            // Menü öffnen und schließen
+            menuButton.addEventListener("click", () => {
+                menuModal.style.display = "block";
+            });
+
+            closeButton.addEventListener("click", () => {
+                menuModal.style.display = "none";
+            });
+
+            window.addEventListener("click", (event) => {
+                if (event.target === menuModal) {
+                    menuModal.style.display = "none";
+                }
+            });
+
+            // Kamera starten
+            cameraButton.addEventListener("click", async () => {
+                try {
+                    cameraButton.style.display = "none";
+
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                        alert("Die Kamera-API wird von diesem Gerät nicht unterstützt.");
+                        return;
+                    }
+
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment" } // Rückkamera bevorzugt
+                    });
+
+                    currentStream = stream;
+
+                    video.srcObject = stream;
+                    video.style.display = "block";
+
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        startQRCodeDetection();
+                    };
+                } catch (error) {
+                    console.error("Kamera-Zugriff fehlgeschlagen:", error);
+                    alert("Kamera-Zugriff fehlgeschlagen. Bitte Berechtigungen prüfen.");
+                }
+            });
+
+            // QR-Code-Erkennung
+            function startQRCodeDetection() {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+
+                const scanQRCode = () => {
+                    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvasContext.getImageData(0, 0, canvas.width, canvas.height);
+
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
+                        inversionAttempts: "dontInvert",
+                    });
+
+                    if (code) {
+                        window.open(code.data, "_self"); // Öffnet die Seite direkt im aktuellen Tab
+                    } else {
+                        requestAnimationFrame(scanQRCode);
+                    }
+                };
+
+                requestAnimationFrame(scanQRCode);
+            }
         });
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
-    <style>
+    <script>
+    document.getElementById("zurueckButton").addEventListener("click", function () {
+        window.location.href = "/index.html";
+    });
+</script>
+ <style>
+     
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -103,17 +181,89 @@
             cursor: pointer;
         }
 
+        .text-container {
+            margin: auto;
+            margin-top: 50px;
+            max-width: 600px;
+            padding: 20px;
+            background-color: whitesmoke;
+            color: rgb(8, 0, 0);
+            text-align: center;
+            border-radius: 10px;
+            border: 8px solid transparent; /* Standard transparenten Rand */
+            animation: blink 1s infinite; /* Blinken dauerhaft aktiv */
+        }
+
+        .camera-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #cameraButton {
+            padding: 20px 40px;
+            font-size: 1.2em;
+            background-color: #fa0d0d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #menuModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+        }
+
         .button-container {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+        }
+     #zurueckButton {
+        position: fixed;
+        bottom: 20px;
+        left: 30%;
+        transform: translateX(-50%);
+        padding: 15px 30px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.2em;
+        cursor: pointer;
+        text-align: center;
+        z-index: 2000;
+    }
+
+    #zurueckButton:hover {
+        background-color: #2980b9;
+    }
+
+        #einsatzabbruchButton {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            gap: 20px;
-        }
-
-        #einsatzabbruchButton,
-        #zurueckButton {
             padding: 15px 30px;
             background-color: #e74c3c;
             color: white;
@@ -122,13 +272,33 @@
             font-size: 1.2em;
             cursor: pointer;
             text-align: center;
+            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
         }
 
-        #einsatzabbruchButton:hover,
-        #zurueckButton:hover {
+        #einsatzabbruchButton:hover {
             background-color: #c0392b;
         }
-    </style>
 
+        /* Hier beginnt die Anpassung */
+        /* Hover-Effekt für den Textbereich mit Blink-Effekt in Rot */
+        .text-container:hover {
+            border: 9px solid red; /* Roter Rand bei Hover */
+            animation: blink 1s infinite; /* Blinken des Rahmens */
+        
+          
+        }
+
+        /* Schriftgröße im Textbereich */
+        .text-container p {
+            font-size: 1.8em; /* Größere Schrift */
+        }
+
+        /* Blinkende Animation */
+        @keyframes blink {
+            0% { border-color: red; }
+            50% { border-color: transparent; }
+            100% { border-color: red; }
+        }
+    </style>
 </body>
 </html>
