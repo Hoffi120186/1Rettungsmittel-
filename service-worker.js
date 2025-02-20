@@ -8,11 +8,11 @@ const urlsToCache = [
   '/offline.html',
   '/Logo%20App.jpg', '/MelderVU.jpg',
   // Patientenseiten
-  '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html',
-  '/patient5.html', '/patient6.html', '/patient7.html', '/patient8.html',
-  '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
-  '/patient13.html', '/patient14.html', '/patient15.html', '/patient16.html',
-  '/patient17.html', '/patient18.html', '/patient19.html', '/patient20.html',
+  '/Patient1.html', '/Patient2.html', '/Patient3.html', '/Patient4.html',
+  '/Patient5.html', '/Patient6.html', '/Patient7.html', '/Patient8.html',
+  '/Patient9.html', '/Patient10.html', '/Patient11.html', '/Patient12.html',
+  '/Patient13.html', '/Patient14.html', '/Patient15.html', '/Patient16.html',
+  '/Patient17.html', '/Patient18.html', '/Patient19.html', '/Patient20.html',
   '/Status4.html'
 ];
 
