@@ -12,7 +12,6 @@
     <!-- Menüleiste -->
     <header>
         <button id="menuButton">☰ Menü</button>
-    
     </header>
 
     <!-- Kamera öffnen Hinweis -->
@@ -65,20 +64,21 @@
         </div>
     </div>
 
-   <button id="einsatzabbruchButton">Einsatzabbruch</button>
+    <div class="button-container">
+        <button id="einsatzabbruchButton">Einsatzabbruch</button>
+        <button id="zurueckButton">Zur Einsatzmeldung</button>
+    </div>
 
-<script>
-    document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
-        window.location.href = "/status4.html";
-    });
-</script>
-    <button id="zurueckButton">Zurück zur Startseite</button>
-
-<script>
-    document.getElementById("zurueckButton").addEventListener("click", function () {
-        window.location.href = "/index.html";
-    });
-</script>
+    <script>
+        document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
+            window.location.href = "/status4.html";
+        });
+    </script>
+    <script>
+        document.getElementById("zurueckButton").addEventListener("click", function () {
+            window.location.href = "/index.html";
+        });
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -161,13 +161,8 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <script>
-    document.getElementById("zurueckButton").addEventListener("click", function () {
-        window.location.href = "/index.html";
-    });
-</script>
- <style>
-     
+
+    <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -241,58 +236,48 @@
         }
 
         .button-container {
-            position: absolute;
-            bottom: 30px;
-            width: 100%;
-            text-align: center;
-        }
-     #zurueckButton {
-        position: fixed;
-        bottom: 20px;
-        left: 30%;
-        transform: translateX(-50%);
-        padding: 15px 30px;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        font-size: 1.2em;
-        cursor: pointer;
-        text-align: center;
-        z-index: 2000;
-    }
-
-    #zurueckButton:hover {
-        background-color: #2980b9;
-    }
-
-        #einsatzabbruchButton {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Abstand zwischen den Buttons */
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 2000;
+        }
+
+        #einsatzabbruchButton, #zurueckButton {
             padding: 15px 30px;
-            background-color: #e74c3c;
-            color: white;
+            font-size: 1.2em;
             border: none;
             border-radius: 50px;
-            font-size: 1.2em;
             cursor: pointer;
             text-align: center;
-            z-index: 2000; /* Sicherstellen, dass der Button immer sichtbar bleibt */
+            width: 180px; /* Gleiche Breite für beide Buttons */
+        }
+
+        #einsatzabbruchButton {
+            background-color: #e74c3c;
+            color: white;
         }
 
         #einsatzabbruchButton:hover {
             background-color: #c0392b;
         }
 
-        /* Hier beginnt die Anpassung */
+        #zurueckButton {
+            background-color: #3498db;
+            color: white;
+        }
+
+        #zurueckButton:hover {
+            background-color: #2980b9;
+        }
+
         /* Hover-Effekt für den Textbereich mit Blink-Effekt in Rot */
         .text-container:hover {
             border: 9px solid red; /* Roter Rand bei Hover */
             animation: blink 1s infinite; /* Blinken des Rahmens */
-        
-          
         }
 
         /* Schriftgröße im Textbereich */
