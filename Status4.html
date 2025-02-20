@@ -64,6 +64,7 @@
         </div>
     </div>
 
+    <!-- Button Container für Einsatzabbruch & Zurück zur Startseite -->
     <div class="button-container">
         <button id="einsatzabbruchButton">Einsatzabbruch</button>
         <button id="zurueckButton">Zurück zur Startseite</button>
@@ -92,16 +93,27 @@
             min-height: 100vh;
         }
 
+        #menuButton {
+            position: absolute;
+            left: 15px;
+            background: none;
+            color: white;
+            border: black;
+            font-size: 1.9em;
+            cursor: pointer;
+        }
+
         .button-container {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 20px;
         }
 
-        #einsatzabbruchButton, #zurueckButton {
+        #einsatzabbruchButton,
+        #zurueckButton {
             padding: 15px 30px;
             background-color: #e74c3c;
             color: white;
@@ -112,9 +124,11 @@
             text-align: center;
         }
 
-        #einsatzabbruchButton:hover, #zurueckButton:hover {
+        #einsatzabbruchButton:hover,
+        #zurueckButton:hover {
             background-color: #c0392b;
         }
     </style>
+
 </body>
 </html>
