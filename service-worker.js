@@ -1,4 +1,4 @@
-const CACHE_NAME = 'offline-cache-v6';
+const CACHE_NAME = 'offline-cache-v5';
 const OFFLINE_FALLBACK_PAGE = '/offline.html';
 
 const urlsToCache = [
@@ -8,29 +8,37 @@ const urlsToCache = [
   '/offline.html',
   '/Logo%20App.jpg', '/MelderVU.jpg',
   // Patientenseiten
-  '/Patient1.html', '/Patient2.html', '/Patient3.html', '/Patient4.html',
-  '/Patient5.html', '/Patient6.html', '/Patient7.html', '/Patient8.html',
-  '/Patient9.html', '/Patient10.html', '/Patient11.html', '/Patient12.html',
-  '/Patient13.html', '/Patient14.html', '/Patient15.html', '/Patient16.html',
-  '/Patient17.html', '/Patient18.html', '/Patient19.html', '/Patient20.html',
+  '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html',
+  '/patient5.html', '/patient6.html', '/patient7.html', '/patient8.html',
+  '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
+  '/patient13.html', '/patient14.html', '/patient15.html', '/patient16.html',
+  '/patient17.html', '/patient18.html', '/patient19.html', '/patient20.html',
   '/Status4.html'
 ];
 
-// 🔵 INSTALL-EVENT → Dateien zwischenspeichern
+// Service Worker installieren & Dateien cachen
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Install Event');
 
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      console.log('[Service Worker] Caching startet...');
-      return cache.addAll(urlsToCache);
+      console.log('[Service Worker] Caching der Dateien beginnt...');
+      
+      for (const url of urlsToCache) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          await cache.put(url, response);
+          console.log(`[Service Worker] Gespeichert: ${url}`);
+        } catch (error) {
+          console.warn(`[Service Worker] Fehler beim Cachen von ${url}:`, error);
+        }
+      }
     })
   );
-
-  self.skipWaiting(); // Service Worker sofort aktivieren
 });
 
-// 🟢 ACTIVATE → Alten Cache löschen und neuen aktivieren
+// Aktivierung & Alten Cache löschen
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Aktiviert');
 
@@ -46,11 +54,9 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-
-  self.clients.claim(); // Sofort Kontrolle über alle Seiten übernehmen
 });
 
-// 🟡 FETCH → Offline-Verhalten verbessern
+// Fetch-Handler mit Offline-Unterstützung
 self.addEventListener('fetch', (event) => {
   console.log(`[Service Worker] Fetch: ${event.request.url}`);
 
@@ -61,17 +67,13 @@ self.addEventListener('fetch', (event) => {
         return cachedResponse;
       }
 
+      console.log(`[Service Worker] Antwort aus Netzwerk: ${event.request.url}`);
       return fetch(event.request)
-        .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200) {
-            throw new Error("Netzwerkantwort ungültig");
-          }
-
-          // Gecachte Dateien beim ersten Abruf speichern
+        .then((response) => {
           return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, networkResponse.clone());
+            cache.put(event.request, response.clone());
             console.log(`[Service Worker] Ressource gespeichert: ${event.request.url}`);
-            return networkResponse;
+            return response;
           });
         })
         .catch(() => {
