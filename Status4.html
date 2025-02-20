@@ -65,10 +65,13 @@
         </div>
     </div>
 
-    <!-- Einsatzabbruch Button -->
-    <div class="button-container">
-        <a href="index.html" id="einsatzabbruchButton">Einsatzabbruch</a>
-    </div>
+   <button id="einsatzabbruchButton">Einsatzabbruch</button>
+
+<script>
+    document.getElementById("einsatzabbruchButton").addEventListener("click", function () {
+        window.location.href = "/status4.html";
+    });
+</script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
