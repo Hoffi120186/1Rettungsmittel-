@@ -2,18 +2,14 @@ const CACHE_NAME = 'offline-cache-v6';
 const OFFLINE_FALLBACK_PAGE = '/offline.html';
 
 const urlsToCache = [
-  '/', '/index.html', '/Einstellungen.html',
-  '/styles.css', '/app.js',
-  '/icons/icon-192x192.png', '/icons/icon-512x512.png',
+  '/', '/index.html',
   '/offline.html',
   '/Logo%20App.jpg', '/MelderVU.jpg',
   // Patientenseiten
   '/patient1.html', '/patient2.html', '/patient3.html', '/patient4.html',
   '/patient5.html', '/patient6.html', '/patient7.html', '/patient8.html',
   '/patient9.html', '/patient10.html', '/patient11.html', '/patient12.html',
-  '/patient13.html', '/patient14.html', '/patient15.html', '/patient16.html',
-  '/patient17.html', '/patient18.html', '/patient19.html', '/patient20.html',
-  '/Status4.html'
+  '/patient13.html', '/patient14.html','/Status4.html',
 ];
 
 // Service Worker installieren & Dateien cachen
